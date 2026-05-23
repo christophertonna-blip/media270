@@ -47,8 +47,9 @@
   }
   .c-tl { top: 28px; left: 28px; border-right: none; border-bottom: none; }
   .c-tr { top: 28px; right: 28px; border-left: none; border-bottom: none; }
-  .c-bl { bottom: 28px; left: 28px; border-right: none; border-top: none; }
-  .c-br { bottom: 28px; right: 28px; border-left: none; border-top: none; }
+  /* Alt köşeler meta bar'ın üstünde (50px + 16px boşluk) */
+  .c-bl { bottom: 66px; left: 28px; border-right: none; border-top: none; }
+  .c-br { bottom: 66px; right: 28px; border-left: none; border-top: none; }
 
   /* --- Full-screen layout --- */
   .page {
@@ -167,6 +168,7 @@
     border-top: 1px solid var(--line);
     background: color-mix(in oklab, var(--bg) 92%, transparent);
     backdrop-filter: saturate(140%) blur(8px);
+    z-index: 5;
   }
   .meta .left {
     display: flex;
