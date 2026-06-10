@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<title>Media270 — Markanız Şehrin Ritmiyle Hareket Eder</title>
+<meta name="viewport" content="width=1440" />
+<link rel="icon" type="image/svg+xml" href="m270_icon_color.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&family=Rajdhani:wght@600&family=DM+Mono:wght@400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --ink:#0A0A0A;
+    --orange:#FF5E1A;
+    --cream:#F5F3EF;
+    --band:#0A0A0A;
+    --band-ink:#FFFFFF;
+    --line:rgba(10,10,10,0.1);
+    --line-strong:rgba(10,10,10,0.18);
+    --muted:rgba(10,10,10,0.6);
+    --grid:rgba(10,10,10,0.045);
+    --band-line:rgba(255,255,255,0.14);
+    --band-grid:rgba(255,255,255,0.04);
+    --hero-title:104px;
+    --section-title:72px;
+    --cta-title:96px;
+    --pad-section:140px;
+    --pad-hero-top:120px;
+    --pad-hero-bottom:140px;
+    --pad-cta:120px;
+    --hero-gap:80px;
+    --step-min:380px;
+    --card-min:440px;
+    --grid-size:64px;
+    --grid-opacity:1;
+    --f-title:"Barlow Condensed", sans-serif;
+    --f-label:"Rajdhani", sans-serif;
+    --f-mono:"DM Mono", monospace;
+    --f-body:"JetBrains Mono", "DM Mono", monospace;
+    transition:background .35s ease, color .35s ease;
+  }
+
+  /* --- MOOD: Editöryel (kırık beyaz kağıt, ızgarasız) --- */
+  body[data-mood="editorial"]{
+    --bg:#F1ECE2;
+    --cream:#E6DECC;
+    --line:rgba(10,10,10,0.14);
+    --line-strong:rgba(10,10,10,0.22);
+    --grid-opacity:0;
+  }
+  /* --- MOOD: Gece (koyu, yüksek kontrast) --- */
+  body[data-mood="night"]{
+    --bg:#0A0A0A;
+    --ink:#FAFAFA;
+    --cream:#141414;
+    --band:#FAFAFA;
+    --band-ink:#0A0A0A;
+    --line:rgba(255,255,255,0.12);
+    --line-strong:rgba(255,255,255,0.22);
+    --muted:rgba(255,255,255,0.55);
+    --grid:rgba(255,255,255,0.05);
+    --band-line:rgba(10,10,10,0.14);
+    --band-grid:rgba(10,10,10,0.04);
+  }
+
+  /* --- TEMPO --- */
+  body[data-tempo="compact"]{
+    --hero-title:84px;--section-title:60px;--cta-title:76px;
+    --pad-section:96px;--pad-hero-top:84px;--pad-hero-bottom:96px;--pad-cta:88px;
+    --hero-gap:56px;--step-min:320px;--card-min:380px;--grid-size:48px;
+  }
+  body[data-tempo="theatrical"]{
+    --hero-title:140px;--section-title:96px;--cta-title:128px;
+    --pad-section:200px;--pad-hero-top:160px;--pad-hero-bottom:200px;--pad-cta:160px;
+    --hero-gap:120px;--step-min:440px;--card-min:520px;--grid-size:96px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--bg);color:var(--ink);font-family:var(--f-body);-webkit-font-smoothing:antialiased;}
+  body{min-width:1440px;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+
+  /* ---------- Shared ---------- */
+  .wrap{max-width:1280px;margin:0 auto;padding:0 48px;}
+  .label{font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:0.18em;font-size:12px;}
+  .mono{font-family:var(--f-mono);font-size:12px;letter-spacing:0.02em;}
+  .h-title{font-family:var(--f-title);font-weight:800;text-transform:uppercase;line-height:0.92;letter-spacing:-0.005em;}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:0.14em;
+    font-size:13px;
+    padding:14px 22px;border-radius:2px;
+    transition:transform .15s ease, background .15s ease, color .15s ease;
+  }
+  .btn-primary{background:var(--orange);color:#fff;}
+  .btn-primary:hover{transform:translateY(-1px);background:#ff4d00;}
+  .btn-ghost{border:1px solid var(--ink);color:var(--ink);}
+  .btn-ghost:hover{background:var(--ink);color:#fff;}
+  .btn .arrow{display:inline-block;transform:translateY(-1px);}
+
+  /* ---------- Nav ---------- */
+  nav.top{
+    position:sticky;top:0;z-index:50;
+    background:color-mix(in oklab, var(--bg) 92%, transparent);backdrop-filter:saturate(140%) blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.top .row{
+    display:flex;align-items:center;justify-content:space-between;
+    height:72px;
+  }
+  .logo{display:flex;align-items:center;gap:10px;}
+  .logo .mark{
+    width:28px;height:28px;border:1.5px solid var(--ink);border-radius:2px;
+    position:relative;overflow:hidden;background:var(--bg);
+  }
+  .logo .mark::before,
+  .logo .mark::after{
+    content:"";position:absolute;background:var(--ink);
+  }
+  .logo .mark{background:var(--bg);}
+  .logo .mark::before{left:6px;top:6px;width:6px;height:16px;background:var(--ink);}
+  .logo .mark::after{left:16px;top:6px;width:6px;height:16px;background:var(--orange);}
+  .logo .name{font-family:var(--f-title);font-weight:800;text-transform:uppercase;font-size:22px;letter-spacing:0.02em;}
+  .logo .name span{color:var(--orange);}
+  .nav-links{display:flex;align-items:center;gap:34px;}
+  .nav-links a{font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:0.16em;font-size:12px;}
+  .nav-links a:hover{color:var(--orange);}
+  .nav-links a .live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--orange);margin-right:8px;vertical-align:middle;animation:pulse 1.8s ease-in-out infinite;}
+  .nav-cta{display:flex;align-items:center;gap:18px;}
+  .nav-phone{font-family:var(--f-mono);font-size:12px;color:var(--muted);}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    border-bottom:1px solid var(--line);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/var(--grid-size) var(--grid-size),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/var(--grid-size) var(--grid-size),
+      var(--bg);
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;background:var(--bg);
+    opacity:calc(1 - var(--grid-opacity));pointer-events:none;
+  }
+  .hero > .wrap{position:relative;}
+  .hero-inner{
+    display:grid;grid-template-columns:1.25fr 1fr;gap:var(--hero-gap);
+    padding:var(--pad-hero-top) 0 var(--pad-hero-bottom);
+    align-items:start;
+  }
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:8px 12px;border:1px solid var(--line-strong);border-radius:2px;
+    margin-bottom:36px;
+    background:#fff;
+  }
+  .hero-eyebrow .dot{width:6px;height:6px;background:var(--orange);border-radius:50%;animation:pulse 1.8s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  .hero-title{font-size:var(--hero-title);}
+  .hero-title .accent{color:var(--orange);}
+  .hero-sub{
+    margin-top:32px;max-width:560px;
+    font-size:18px;line-height:1.55;color:color-mix(in oklab, var(--ink) 72%, transparent);
+  }
+  .hero-actions{display:flex;align-items:center;gap:16px;margin-top:44px;}
+  .hero-meta{
+    margin-top:48px;display:flex;align-items:center;gap:28px;
+    color:var(--muted);
+  }
+  .hero-meta .sep{width:1px;height:14px;background:var(--line-strong);}
+
+  .stat-stack{
+    border:1px solid var(--line-strong);
+    background:var(--bg);
+    display:flex;flex-direction:column;
+  }
+  .stat-stack .head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 20px;border-bottom:1px solid var(--line);
+    color:var(--muted);
+  }
+  .stat-stack .head .live{
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .stat-stack .head .live i{width:6px;height:6px;background:var(--orange);border-radius:50%;}
+  .stat{
+    padding:36px 28px;border-bottom:1px solid var(--line);
+    display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;
+  }
+  .stat:last-of-type{border-bottom:none;}
+  .stat .num{font-family:var(--f-title);font-weight:800;font-size:88px;line-height:0.9;letter-spacing:-0.01em;}
+  .stat .num .unit{color:var(--orange);font-size:56px;margin-left:6px;}
+  .stat .num .unit-wide{font-size:36px;letter-spacing:0.02em;}
+  .stat .desc{display:flex;flex-direction:column;align-items:flex-end;gap:6px;text-align:right;max-width:180px;}
+  .stat .desc .k{font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:0.16em;font-size:11px;color:var(--muted);}
+  .stat .desc .v{font-size:14px;line-height:1.35;}
+
+  .hero .fadeUp{opacity:0;transform:translateY(18px);animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) forwards;}
+  .hero .d1{animation-delay:.05s;}
+  .hero .d2{animation-delay:.18s;}
+  .hero .d3{animation-delay:.32s;}
+  .hero .d4{animation-delay:.46s;}
+  .hero .d5{animation-delay:.20s;}
+  @keyframes fadeUp{to{opacity:1;transform:none;}}
+
+  /* corner brackets */
+  .corner-tl,.corner-tr,.corner-bl,.corner-br{position:absolute;width:18px;height:18px;border:1.5px solid var(--ink);}
+  .corner-tl{top:-1px;left:-1px;border-right:none;border-bottom:none;}
+  .corner-tr{top:-1px;right:-1px;border-left:none;border-bottom:none;}
+  .corner-bl{bottom:-1px;left:-1px;border-right:none;border-top:none;}
+  .corner-br{bottom:-1px;right:-1px;border-left:none;border-top:none;}
+  .stat-stack,.spec-stack,.truck-viz,.card{position:relative;}
+
+  /* ---------- Section header ---------- */
+  .section{padding:var(--pad-section) 0;border-bottom:1px solid var(--line);}
+  .section-head{
+    display:grid;grid-template-columns:1fr 1.4fr;gap:80px;
+    margin-bottom:80px;
+    align-items:end;
+  }
+  .section-head .eyebrow{
+    display:flex;align-items:center;gap:14px;color:var(--muted);
+  }
+  .section-head .eyebrow .num{
+    font-family:var(--f-mono);font-size:12px;color:var(--orange);
+  }
+  .section-head h2{font-size:var(--section-title);margin-top:18px;max-width:540px;}
+  .section-head .lede{font-size:18px;line-height:1.55;color:color-mix(in oklab, var(--ink) 70%, transparent);max-width:520px;}
+
+  /* ---------- How it works ---------- */
+  .steps{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    border-top:1px solid var(--line);border-left:1px solid var(--line);
+  }
+  .step{
+    padding:48px 40px 56px;
+    border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+    position:relative;background:var(--bg);
+    min-height:var(--step-min);
+    display:flex;flex-direction:column;
+  }
+  .step .step-no{
+    font-family:var(--f-mono);font-size:12px;color:var(--orange);
+  }
+  .step .step-title{
+    font-family:var(--f-title);font-weight:800;text-transform:uppercase;
+    font-size:36px;letter-spacing:0.005em;margin-top:18px;
+  }
+  .step .step-body{margin-top:18px;color:color-mix(in oklab, var(--ink) 70%, transparent);line-height:1.55;font-size:15px;}
+  .step .step-foot{margin-top:auto;padding-top:36px;display:flex;align-items:center;justify-content:space-between;color:var(--muted);}
+  .step .icon{
+    margin-top:32px;height:120px;border:1px solid var(--line);position:relative;overflow:hidden;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/24px 24px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/24px 24px;
+  }
+  /* Step 1 — map route */
+  .icon-route svg{position:absolute;inset:0;width:100%;height:100%;}
+  .icon-route path{stroke-dasharray:600;stroke-dashoffset:600;}
+  .icon-route.is-visible .route-path{animation:drawOrange 10s linear infinite;}
+  .icon-route.is-visible .grey-path{animation:drawGrey 10s linear infinite;}
+  .icon-route .pin{
+    position:absolute;width:10px;height:10px;background:var(--orange);border-radius:50%;
+    box-shadow:0 0 0 4px rgba(255,94,26,0.18);
+    opacity:0;transform:scale(0);transform-origin:center;
+  }
+  .icon-route.is-visible .pin:nth-of-type(1){animation:pin1Loop 10s linear infinite;}
+  .icon-route.is-visible .pin:nth-of-type(2){animation:pin2Loop 10s linear infinite;}
+  .icon-route.is-visible .pin:nth-of-type(3){animation:pin3Loop 10s linear infinite;}
+  @keyframes drawOrange{
+    0%  {stroke-dashoffset:600;}
+    75% {stroke-dashoffset:0;}
+    100%{stroke-dashoffset:0;}
+  }
+  @keyframes drawGrey{
+    0%,25%{stroke-dashoffset:600;}
+    100% {stroke-dashoffset:0;}
+  }
+  @keyframes pin1Loop{
+    0%,5%   {opacity:0;transform:scale(0);}
+    10%     {opacity:1;transform:scale(1);}
+    90%     {opacity:1;transform:scale(1);}
+    97%,100%{opacity:0;transform:scale(0);}
+  }
+  @keyframes pin2Loop{
+    0%,56%  {opacity:0;transform:scale(0);}
+    61%     {opacity:1;transform:scale(1);}
+    90%     {opacity:1;transform:scale(1);}
+    97%,100%{opacity:0;transform:scale(0);}
+  }
+  @keyframes pin3Loop{
+    0%,75%  {opacity:0;transform:scale(0);}
+    80%     {opacity:1;transform:scale(1);}
+    90%     {opacity:1;transform:scale(1);}
+    97%,100%{opacity:0;transform:scale(0);}
+  }
+  /* Step 2 — broadcast */
+  .icon-broadcast{display:flex;align-items:center;justify-content:center;}
+  .icon-broadcast .truck{
+    width:88px;height:48px;border:1.5px solid var(--ink);position:relative;
+  }
+  .icon-broadcast .truck::before{content:"";position:absolute;inset:6px;background:var(--ink);}
+  .icon-broadcast .truck::after{content:"";position:absolute;left:-22px;top:14px;width:24px;height:20px;border:1.5px solid var(--ink);}
+  .icon-broadcast .wave{position:absolute;border:1.5px solid var(--orange);border-radius:50%;opacity:.6;}
+  .icon-broadcast .w1{width:140px;height:140px;top:-30px;}
+  .icon-broadcast .w2{width:200px;height:200px;top:-60px;opacity:.3;}
+  /* Step 3 — chart */
+  .icon-metrics{padding:18px;}
+  .icon-metrics .bars{display:flex;align-items:flex-end;gap:8px;height:100%;}
+  .icon-metrics .bars span{flex:1;background:var(--ink);}
+  .icon-metrics .bars span.alt{background:var(--orange);}
+
+  /* ---------- Audience ---------- */
+  .audience{background:var(--cream);}
+  .audience .section-head h2{max-width:600px;}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .card{
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/24px 24px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/24px 24px,
+      var(--bg);
+    border:1px solid var(--line-strong);padding:36px 32px 32px;
+    display:flex;flex-direction:column;min-height:var(--card-min);position:relative;
+  }
+  .card-viz{
+    margin:0 -8px 24px;height:140px;
+    border:1px solid var(--line);position:relative;overflow:hidden;
+    background:var(--bg);
+  }
+  .card-viz svg{position:absolute;inset:0;width:100%;height:100%;}
+  .card-viz .vz-tag{
+    position:absolute;top:10px;left:12px;
+    font-family:var(--f-mono);font-size:10px;color:var(--muted);
+    letter-spacing:0.04em;
+  }
+  .card .tag{
+    font-family:var(--f-mono);font-size:11px;color:var(--orange);
+    display:flex;align-items:center;gap:8px;
+  }
+  .card .tag i{width:5px;height:5px;background:var(--orange);border-radius:50%;}
+  .card h3{font-family:var(--f-title);font-weight:800;text-transform:uppercase;font-size:34px;margin-top:18px;line-height:1;}
+  .card .desc{margin-top:18px;color:color-mix(in oklab, var(--ink) 70%, transparent);font-size:15px;line-height:1.55;}
+  .card ul{list-style:none;margin-top:28px;border-top:1px solid var(--line);}
+  .card ul li{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 0;border-bottom:1px solid var(--line);
+    font-size:14px;
+  }
+  .card ul li .k{font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:0.14em;font-size:11px;color:var(--muted);}
+  .card ul li .v{font-family:var(--f-mono);font-size:12px;}
+  .card .use-cases{margin-top:28px;padding-top:24px;border-top:1px solid var(--line);}
+  .card .use-cases .uc-label{
+    font-family:var(--f-label);font-weight:600;text-transform:uppercase;
+    letter-spacing:0.16em;font-size:11px;color:var(--muted);
+    display:block;margin-bottom:14px;
+  }
+  .card .use-cases .uc-item{
+    font-size:15px;line-height:1.45;padding:10px 0;
+    border-bottom:1px dashed var(--line);
+    color:color-mix(in oklab, var(--ink) 88%, transparent);
+  }
+  .card .use-cases .uc-item:last-child{border-bottom:none;}
+  .card .foot{margin-top:auto;padding-top:28px;display:flex;align-items:center;justify-content:space-between;}
+  .card .foot a{font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:0.16em;font-size:12px;color:var(--orange);}
+  /* desc min-height so use-cases align across cards */
+  .card .desc{min-height:190px;}
+
+  /* ---------- Live map banner (audience) ---------- */
+  .live-banner{
+    margin-bottom:40px;
+    display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:32px;
+    padding:22px 28px;
+    border:1px solid var(--ink);
+    background:var(--bg);
+    position:relative;
+    color:var(--ink);
+    cursor:default;
+  }
+  .live-banner .lb-mini{width:72px;height:48px;border:1px solid currentColor;position:relative;flex-shrink:0;color:currentColor;}
+  .live-banner .lb-mini svg{position:absolute;inset:0;width:100%;height:100%;}
+  .live-banner .lb-mini .lb-pin{position:absolute;width:8px;height:8px;background:var(--orange);border-radius:50%;box-shadow:0 0 0 4px color-mix(in oklab, var(--orange) 30%, transparent);left:44px;top:18px;animation:pulse 1.8s ease-in-out infinite;}
+  .live-banner .lb-text{display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .live-banner .lb-eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:0.06em;color:var(--orange);text-transform:uppercase;}
+  .live-banner .lb-eyebrow i{width:6px;height:6px;background:var(--orange);border-radius:50%;animation:pulse 1.8s ease-in-out infinite;}
+  .live-banner .lb-title{font-family:var(--f-title);font-weight:800;text-transform:uppercase;font-size:26px;line-height:1;letter-spacing:0.005em;}
+  .live-banner .lb-sub{font-family:var(--f-body);font-size:14px;color:color-mix(in oklab, currentColor 75%, transparent);}
+  .live-banner .lb-loc{font-family:var(--f-mono);font-size:12px;color:color-mix(in oklab, currentColor 75%, transparent);display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+  .live-banner .lb-loc .now{color:currentColor;font-weight:500;}
+  .live-banner .lb-arrow{font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:0.16em;font-size:12px;display:inline-flex;align-items:center;gap:8px;transition:transform .15s ease;}
+  .live-banner .lb-arrow span{color:var(--orange);}
+
+  /* ---------- Spec section ---------- */
+  .spec{
+    padding:var(--pad-section) 0;border-bottom:1px solid var(--line);
+    background:var(--bg);position:relative;
+  }
+  .spec-layout{display:grid;grid-template-columns:1.25fr 1fr;gap:var(--hero-gap);align-items:start;}
+  .spec-intro .eyebrow{display:flex;align-items:center;gap:14px;color:var(--muted);margin-bottom:32px;}
+  .spec-intro .eyebrow .num{font-family:var(--f-mono);font-size:12px;color:var(--orange);}
+  .spec-h2{font-size:var(--hero-title);line-height:0.92;}
+  .spec-h2 .accent{color:var(--orange);}
+  .spec-lede{margin-top:36px;font-size:18px;line-height:1.6;color:color-mix(in oklab, var(--ink) 72%, transparent);max-width:520px;}
+  .truck-viz{
+    margin-top:48px;
+    position:relative;
+    border:1px solid var(--line-strong);
+    padding:36px 40px 24px;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/24px 24px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/24px 24px,
+      var(--bg);
+  }
+  .truck-viz .truck-svg{display:block;width:100%;height:auto;color:var(--ink);}
+
+  .spec-stack{
+    border:1px solid var(--line-strong);background:var(--bg);
+    position:relative;display:flex;flex-direction:column;
+  }
+  .spec-stack .spec-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 20px;border-bottom:1px solid var(--line);color:var(--muted);
+    margin:0;
+  }
+  .spec-row{
+    padding:30px 28px;border-bottom:1px solid var(--line);
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .spec-row:last-child{border-bottom:none;}
+  .spec-row .k{
+    font-family:var(--f-body);font-size:18px;
+    color:color-mix(in oklab, var(--ink) 72%, transparent);
+  }
+  .spec-row .v{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .spec-row .v .big{
+    font-family:var(--f-title);font-weight:800;font-size:60px;line-height:0.9;
+    letter-spacing:-0.01em;
+  }
+  .spec-row .v .unit{font-family:var(--f-mono);font-size:14px;color:var(--orange);display:inline-flex;align-items:center;gap:6px;}
+  .spec-row .v .x{font-family:var(--f-title);font-weight:800;font-size:36px;line-height:0.9;color:var(--muted);margin:0 -2px;}
+  .spec-row .k .k-mult{font-style:normal;color:var(--orange);font-family:var(--f-mono);font-size:11px;letter-spacing:0.02em;margin-left:6px;text-transform:none;}
+  .spec-row .v .unit .dot-on{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--orange);}
+
+  /* ---------- CTA band ---------- */
+  .cta-band{
+    background:var(--band);color:var(--band-ink);padding:var(--pad-cta) 0;
+    position:relative;overflow:hidden;
+  }
+  .cta-band::before{
+    content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(var(--band-grid) 1px, transparent 1px) 0 0/var(--grid-size) var(--grid-size),
+      linear-gradient(90deg, var(--band-grid) 1px, transparent 1px) 0 0/var(--grid-size) var(--grid-size);
+    pointer-events:none;opacity:var(--grid-opacity);
+  }
+  .cta-band .wrap{position:relative;}
+  .cta-stack{max-width:1080px;margin:0 auto;text-align:center;}
+  .cta-eyebrow{display:flex;align-items:center;justify-content:center;gap:14px;color:color-mix(in oklab, var(--band-ink) 55%, transparent);}
+  .cta-h2{font-size:var(--cta-title);line-height:0.95;margin-top:24px;}
+  .cta-h2 .accent{color:var(--orange);}
+  .cta-lede{margin:28px auto 0;max-width:640px;color:color-mix(in oklab, var(--band-ink) 70%, transparent);font-size:18px;line-height:1.55;}
+  .cta-actions{display:flex;gap:14px;margin-top:44px;justify-content:center;}
+  .cta-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:80px;align-items:center;}
+  .cta-band h2{font-size:var(--cta-title);line-height:0.92;}
+  .cta-band h2 .accent{color:var(--orange);}
+  .cta-band .lede{margin-top:28px;max-width:520px;color:color-mix(in oklab, var(--band-ink) 70%, transparent);font-size:18px;line-height:1.55;}
+  .btn-primary.lg{padding:18px 28px;font-size:14px;}
+  .btn-ghost-dark{border:1px solid color-mix(in oklab, var(--band-ink) 25%, transparent);color:var(--band-ink);padding:18px 28px;font-size:14px;}
+  .btn-ghost-dark:hover{background:var(--band-ink);color:var(--band);}
+
+  .quick-spec{border:1px solid var(--band-line);}
+  .quick-spec .row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:22px 24px;border-bottom:1px solid color-mix(in oklab, var(--band-ink) 10%, transparent);
+  }
+  .quick-spec .row:last-child{border-bottom:none;}
+  .quick-spec .k{font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:0.14em;font-size:11px;color:color-mix(in oklab, var(--band-ink) 55%, transparent);}
+  .quick-spec .v{font-family:var(--f-mono);font-size:13px;}
+  .quick-spec .v .accent{color:var(--orange);}
+  .quick-spec .head{padding:16px 24px;border-bottom:1px solid var(--band-line);display:flex;justify-content:space-between;color:color-mix(in oklab, var(--band-ink) 55%, transparent);}
+
+  /* ---------- Footer ---------- */
+  footer{padding:60px 0 50px;border-top:1px solid var(--line);}
+  footer .row{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;gap:40px;}
+  footer .social{display:flex;justify-content:center;gap:28px;}
+  footer .social a{font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:0.16em;font-size:12px;color:var(--muted);}
+  footer .social a:hover{color:var(--orange);}
+  footer .copyright{text-align:right;font-family:var(--f-mono);font-size:12px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<!-- =============== NAV =============== -->
+<nav class="top">
+  <div class="wrap row">
+    <a class="logo" href="#">
+      <img src="m270_lockup_color.svg" alt="Media270" height="52" style="display:block;">
+    </a>
+    <div class="nav-links">
+      <a href="#nasil">Nasıl Çalışır</a>
+      <a href="#kime">Kime Hizmet</a>
+      <span style="opacity:0.35;cursor:default;font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:0.16em;font-size:12px;"><span class="live-dot" aria-hidden="true"></span>Canlı Harita</span>
+      <a href="#iletisim">İletişim</a>
+    </div>
+    <div class="nav-cta">
+      <span class="nav-phone"></span>
+      <a href="#teklif" class="btn btn-primary">Teklif Al <span class="arrow">→</span></a>
+    </div>
+  </div>
+</nav>
+
+<!-- =============== HERO =============== -->
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <div class="hero-eyebrow fadeUp d1">
+        <span class="dot"></span>
+        <span class="label">İstanbul · Mobil LED Reklam</span>
+      </div>
+      <h1 class="h-title hero-title fadeUp d2">
+        Markanız<br/>
+        Şehrin Ritmiyle<br/>
+        <span class="accent">Hareket Eder.</span>
+      </h1>
+      <p class="hero-sub fadeUp d3">
+        Boğaz'dan Maslak'a, Kadıköy'den Levent'e — 9.92 × 2.24 m PH-3 outdoor LED truck'ımız
+        kampanyalarınızı şehrin tam göbeğinde, GPS-doğrulamalı rotalarla yayınlar.
+        Ajans ve etkinlik ekipleri için, ölçülebilir dış mekan reklamcılığı.
+      </p>
+      <div class="hero-actions fadeUp d4">
+        <a href="#teklif" class="btn btn-primary">Teklif Al <span class="arrow">→</span></a>
+        <a href="#nasil" class="btn btn-ghost">Süreci İncele</a>
+      </div>
+      <div class="hero-meta fadeUp d4">
+        <span class="mono">1 ARAÇ · İSTANBUL</span>
+        <span class="sep"></span>
+        <span class="mono">PH-3 · 2480×560 PX</span>
+        <span class="sep"></span>
+        <span class="mono">İST-001 · MTK 2024</span>
+      </div>
+    </div>
+
+    <aside class="stat-stack fadeUp d5">
+      <span class="corner-tl"></span><span class="corner-tr"></span>
+      <span class="corner-bl"></span><span class="corner-br"></span>
+      <div class="stat">
+        <div class="num">18<span class="unit">M</span></div>
+        <div class="desc">
+          <span class="k">Aylık İzlenim</span>
+          <span class="v">İstanbul ana arterlerinde, GPS rotalarıyla doğrulanmış.</span>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="num">3<span class="unit unit-wide">EKRAN</span></div>
+        <div class="desc">
+          <span class="k">Yayın Yüzeyi</span>
+          <span class="v">Tek araç üzerinde, 3 yönde eş zamanlı yayın.</span>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="num">24<span class="unit">H</span></div>
+        <div class="desc">
+          <span class="k">Kampanya Lansmanı</span>
+          <span class="v">Kreatif teslimden ilk yayına kadar.</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- =============== HOW IT WORKS =============== -->
+<section class="section" id="nasil">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span class="num">/ 01</span><span class="label">Nasıl Çalışır</span></div>
+        <h2 class="h-title">Üç Adımda<br/>Sokağa İner.</h2>
+      </div>
+      <p class="lede">
+        Brief'ten yayın raporuna kadar tüm süreç tek bir operasyon ekibi tarafından
+        yönetilir. Rota planlaması, kreatif teslim ve performans ölçümü standart.
+      </p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <span class="step-no">/ 01</span>
+        <h3 class="step-title">Rota</h3>
+        <p class="step-body">
+          Hedef demografiye göre saat ve bölge bazlı rota tasarımı. Trafik yoğunluğu,
+          etkinlik takvimi ve ilçe profiline göre optimize edilir.
+        </p>
+        <div class="icon icon-route">
+          <svg viewBox="0 0 400 120" preserveAspectRatio="none">
+            <!-- street grid: ana arterler -->
+            <g stroke="currentColor" stroke-width="0.6" opacity="0.45">
+              <line x1="0" y1="24" x2="400" y2="24"/>
+              <line x1="0" y1="60" x2="400" y2="60"/>
+              <line x1="0" y1="96" x2="400" y2="96"/>
+              <line x1="60"  y1="0" x2="60"  y2="120"/>
+              <line x1="140" y1="0" x2="140" y2="120"/>
+              <line x1="220" y1="0" x2="220" y2="120"/>
+              <line x1="300" y1="0" x2="300" y2="120"/>
+              <line x1="360" y1="0" x2="360" y2="120"/>
+            </g>
+            <!-- ana arter (kalın) -->
+            <line x1="0" y1="60" x2="400" y2="60" stroke="currentColor" stroke-width="1.6" opacity="0.9"/>
+            <!-- rota: sokak takipli -->
+            <path class="route-path" d="M10,96 L60,96 L60,60 L220,60 L220,24 L300,24 L300,60 L390,60"
+                  fill="none" stroke="var(--orange)" stroke-width="2.2" stroke-linejoin="miter"/>
+            <path class="grey-path" d="M10,96 L60,96 L60,60 L220,60 L220,24 L300,24 L300,60 L390,60"
+                  fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="miter" opacity="0.3"/>
+          </svg>
+          <span class="pin" style="left:6px;top:90px;"></span>
+          <span class="pin" style="left:216px;top:18px;"></span>
+          <span class="pin" style="left:384px;top:54px;"></span>
+        </div>
+        <div class="step-foot">
+          <span class="mono">5–7 İŞ GÜNÜ</span>
+          <span class="mono">GPS DOĞRULAMALI</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-no">/ 02</span>
+        <h3 class="step-title">Yayın</h3>
+        <p class="step-body">
+          PH-3 outdoor LED panellerde, 2480×560 piksel kreatif yayını. Statik, video veya
+          dinamik içerik — gün ışığında okunabilir 6500 cd/m² parlaklık.
+        </p>
+        <div class="icon icon-broadcast">
+          <span class="wave w2"></span>
+          <span class="wave w1"></span>
+          <span class="truck"></span>
+        </div>
+        <div class="step-foot">
+          <span class="mono">PH-3 · 6500 CD/M²</span>
+          <span class="mono">1 ARAÇ · 9.92 M</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-no">/ 03</span>
+        <h3 class="step-title">Ölçüm</h3>
+        <p class="step-body">
+          Yayın bitiminde kampanyanızın özet raporu tarafınıza iletilir. Detaylı metrikler
+          ileri aşamada müşteri panelinden takip edilebilecek.
+        </p>
+        <div class="icon icon-metrics">
+          <div class="bars">
+            <span style="height:30%"></span>
+            <span style="height:55%"></span>
+            <span style="height:42%"></span>
+            <span style="height:78%" class="alt"></span>
+            <span style="height:60%"></span>
+            <span style="height:90%" class="alt"></span>
+            <span style="height:48%"></span>
+            <span style="height:72%"></span>
+            <span style="height:58%"></span>
+            <span style="height:38%"></span>
+          </div>
+        </div>
+        <div class="step-foot">
+          <span class="mono">PDF + CSV</span>
+          <span class="mono">48 SAAT İÇİNDE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== AUDIENCE =============== -->
+<section class="section audience" id="kime">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span class="num">/ 02</span><span class="label">Kime Hizmet</span></div>
+        <h2 class="h-title">Üç Ekip İçin<br/>Operasyonel<br/>Altyapı.</h2>
+      </div>
+      <p class="lede">
+        Ajans ve etkinlik şirketleriyle uzun süreli çerçeve anlaşmaları yapıyoruz.
+        KOBİ'ler için ise paketli, sabit fiyatlı yayın blokları sunuyoruz.
+      </p>
+    </div>
+
+    <div class="live-banner">
+      <div class="lb-mini" aria-hidden="true">
+        <svg viewBox="0 0 72 48" preserveAspectRatio="none">
+          <g stroke="currentColor" stroke-width="0.5" opacity="0.35">
+            <line x1="0" y1="12" x2="72" y2="12"/>
+            <line x1="0" y1="24" x2="72" y2="24"/>
+            <line x1="0" y1="36" x2="72" y2="36"/>
+            <line x1="18" y1="0" x2="18" y2="48"/>
+            <line x1="36" y1="0" x2="36" y2="48"/>
+            <line x1="54" y1="0" x2="54" y2="48"/>
+          </g>
+          <path class="lb-route" d="M6,36 L18,36 L18,24 L36,24 L36,12 L48,12 L48,22" fill="none" stroke="var(--orange)" stroke-width="1.5" stroke-linejoin="miter"/>
+        </svg>
+        <span class="lb-pin"></span>
+      </div>
+      <div class="lb-text">
+        <span class="lb-eyebrow"><i></i>CANLI · ŞU AN YAYINDA</span>
+        <span class="lb-title">Canlı Yayın Haritası</span>
+        <span class="lb-sub">Aracın anlık konumu, rota geçmişi ve sıradaki durakları — pin'lerle.</span>
+      </div>
+      <div class="lb-loc">
+        <span>Şu an</span>
+        <span class="now">LEVENT · BÜYÜKDERE CAD.</span>
+      </div>
+      <span class="lb-arrow">Haritayı Aç <span>→</span></span>
+    </div>
+
+    <div class="cards">
+      <article class="card">
+        <span class="corner-tl"></span><span class="corner-tr"></span>
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <span class="tag"><i></i>01 / EVENT</span>
+        <h3>Etkinlik<br/>Organizatörleri</h3>
+        <div class="card-viz">
+          <span class="vz-tag">SIG / EVT</span>
+          <svg viewBox="0 0 320 140" preserveAspectRatio="none" aria-hidden="true">
+            <g stroke="currentColor" stroke-width="0.5" opacity="0.15">
+              <line x1="0" y1="35" x2="320" y2="35"/>
+              <line x1="0" y1="70" x2="320" y2="70"/>
+              <line x1="0" y1="105" x2="320" y2="105"/>
+              <line x1="80" y1="0" x2="80" y2="140"/>
+              <line x1="160" y1="0" x2="160" y2="140"/>
+              <line x1="240" y1="0" x2="240" y2="140"/>
+            </g>
+            <circle cx="160" cy="70" r="54" fill="none" stroke="var(--orange)" stroke-width="1" opacity="0.35"/>
+            <circle cx="160" cy="70" r="38" fill="none" stroke="var(--orange)" stroke-width="1" opacity="0.55"/>
+            <circle cx="160" cy="70" r="22" fill="none" stroke="var(--orange)" stroke-width="1.2" opacity="0.85"/>
+            <circle cx="160" cy="70" r="6" fill="var(--orange)"/>
+            <g font-family="DM Mono, monospace" font-size="9" fill="currentColor" opacity="0.55">
+              <text x="232" y="73">+R500</text>
+              <text x="82" y="73" text-anchor="end">EVT-01</text>
+            </g>
+          </svg>
+        </div>
+        <p class="desc">
+          Konser, lansman ve festival çevresinde rota yayını. Kreatifiniz hazırsa onu
+          yayınlarız; yoksa içerik üretimi hizmetimizle yayına hazır hale getiririz.
+        </p>
+        <div class="use-cases">
+          <span class="uc-label">Örnek Kullanım</span>
+          <p class="uc-item">Konser tanıtımları</p>
+          <p class="uc-item">Lansman günü canlı duyuru</p>
+          <p class="uc-item">Festival alanı yön bilgilendirme</p>
+        </div>
+        <div class="foot">
+          <span class="mono">/ETK-A</span>
+          <a href="#iletisim">İletişime Geç →</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <span class="corner-tl"></span><span class="corner-tr"></span>
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <span class="tag"><i></i>02 / AGENCY</span>
+        <h3>Medya<br/>Ajansları</h3>
+        <div class="card-viz">
+          <span class="vz-tag">CH / IMP</span>
+          <svg viewBox="0 0 320 140" preserveAspectRatio="none" aria-hidden="true">
+            <g stroke="currentColor" stroke-width="0.5" opacity="0.15">
+              <line x1="0" y1="35" x2="320" y2="35"/>
+              <line x1="0" y1="70" x2="320" y2="70"/>
+              <line x1="0" y1="105" x2="320" y2="105"/>
+            </g>
+            <polyline points="10,110 50,92 90,98 130,72 170,80 210,52 250,46 300,28"
+                      fill="none" stroke="var(--orange)" stroke-width="1.8"/>
+            <g fill="currentColor">
+              <circle cx="50" cy="92" r="2.5"/>
+              <circle cx="130" cy="72" r="2.5"/>
+              <circle cx="210" cy="52" r="2.5"/>
+              <circle cx="300" cy="28" r="3.5" fill="var(--orange)"/>
+            </g>
+            <g stroke="currentColor" stroke-width="0.4" opacity="0.35" stroke-dasharray="2 3">
+              <line x1="300" y1="28" x2="300" y2="130"/>
+              <line x1="10" y1="28" x2="300" y2="28"/>
+            </g>
+            <g font-family="DM Mono, monospace" font-size="9" fill="currentColor" opacity="0.55">
+              <text x="10" y="24">+18M</text>
+              <text x="10" y="130">W01</text>
+              <text x="288" y="130" text-anchor="end">W08</text>
+            </g>
+          </svg>
+        </div>
+        <p class="desc">
+          Çerçeve anlaşma ile müşteri kampanyalarınızı birlikte yürütüyoruz. Her kampanya
+          sonunda rota log'u, izlenim tahmini ve foto kanıtla beraber detaylı raporlama
+          maille teslim edilir. Müşteri paneli ilerleyen aşamalarda devreye girecek.
+        </p>
+        <div class="use-cases">
+          <span class="uc-label">Örnek Kullanım</span>
+          <p class="uc-item">Marka kampanyası için kreatif rotasyon</p>
+          <p class="uc-item">Aylık dış mekan görünürlük planı</p>
+          <p class="uc-item">Müşteri raporu için yayın özetleri</p>
+        </div>
+        <div class="foot">
+          <span class="mono">/AJN-B</span>
+          <a href="#iletisim">İletişime Geç →</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <span class="corner-tl"></span><span class="corner-tr"></span>
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <span class="tag"><i></i>03 / SMB</span>
+        <h3>KOBİ'ler<br/>&amp; Markalar</h3>
+        <div class="card-viz">
+          <span class="vz-tag">SHR / SMB</span>
+          <svg viewBox="0 0 320 140" preserveAspectRatio="none" aria-hidden="true">
+            <g stroke="currentColor" stroke-width="0.5" opacity="0.15">
+              <line x1="0" y1="35" x2="320" y2="35"/>
+              <line x1="0" y1="70" x2="320" y2="70"/>
+              <line x1="0" y1="105" x2="320" y2="105"/>
+              <line x1="80" y1="0" x2="80" y2="140"/>
+              <line x1="160" y1="0" x2="160" y2="140"/>
+              <line x1="240" y1="0" x2="240" y2="140"/>
+            </g>
+            <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.45">
+              <circle cx="60" cy="40" r="5"/>
+              <circle cx="260" cy="45" r="5"/>
+              <circle cx="95" cy="100" r="5"/>
+              <circle cx="225" cy="95" r="5"/>
+              <circle cx="180" cy="60" r="5"/>
+            </g>
+            <circle cx="160" cy="70" r="9" fill="var(--orange)"/>
+            <circle cx="160" cy="70" r="18" fill="none" stroke="var(--orange)" stroke-width="1" opacity="0.5"/>
+            <g stroke="currentColor" stroke-width="0.5" opacity="0.35" stroke-dasharray="2 3">
+              <line x1="160" y1="70" x2="60" y2="40"/>
+              <line x1="160" y1="70" x2="260" y2="45"/>
+              <line x1="160" y1="70" x2="95" y2="100"/>
+              <line x1="160" y1="70" x2="225" y2="95"/>
+              <line x1="160" y1="70" x2="180" y2="60"/>
+            </g>
+            <g font-family="DM Mono, monospace" font-size="9" fill="currentColor" opacity="0.55">
+              <text x="168" y="90">HUB</text>
+            </g>
+          </svg>
+        </div>
+        <p class="desc">
+          Paylaşımlı kullanım modeli ile her ölçekten KOBİ'ye ve markaya hizmet veriyoruz —
+          tek bir LED truck'ın esnek gücüyle.
+        </p>
+        <div class="use-cases">
+          <span class="uc-label">Örnek Kullanım</span>
+          <p class="uc-item">Mağaza açılış duyurusu</p>
+          <p class="uc-item">Kampanya duyuruları</p>
+          <p class="uc-item">Yerel etkinlik tanıtımı</p>
+        </div>
+        <div class="foot">
+          <span class="mono">/KOB-C</span>
+          <a href="#iletisim">İletişime Geç →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =============== SPEC =============== -->
+<section class="spec" id="spec">
+  <div class="wrap">
+    <div class="spec-layout">
+      <div class="spec-intro">
+        <div class="eyebrow"><span class="num">/ 03</span><span class="label">Donanım</span></div>
+        <h2 class="h-title spec-h2">9.92 Metre<br/><span class="accent">LED</span> Sokakta.</h2>
+        <p class="spec-lede">
+          PH-3 outdoor LED panel, 3 yönde eş zamanlı yayın için tasarlandı. Gün ışığında
+          okunabilen 6500 cd/m² parlaklık, kreatifinizi sokak ölçeğinde teslim eder.
+        </p>
+        <div class="truck-viz">
+          <span class="corner-tl"></span><span class="corner-tr"></span>
+          <span class="corner-bl"></span><span class="corner-br"></span>
+          <svg viewBox="0 0 520 240" preserveAspectRatio="xMidYMid meet" class="truck-svg" aria-hidden="true">
+            <g stroke="currentColor" stroke-width="0.6" opacity="0.18">
+              <line x1="0" y1="200" x2="520" y2="200"/>
+              <line x1="0" y1="220" x2="520" y2="220"/>
+            </g>
+            <g stroke="currentColor" stroke-width="0.8" opacity="0.45">
+              <line x1="125" y1="30" x2="475" y2="30"/>
+              <line x1="125" y1="24" x2="125" y2="36"/>
+              <line x1="475" y1="24" x2="475" y2="36"/>
+            </g>
+            <text x="300" y="20" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="currentColor" opacity="0.65">3840 mm</text>
+            <rect x="40" y="110" width="85" height="90" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="52" y="120" width="60" height="40" fill="currentColor" opacity="0.1"/>
+            <rect x="125" y="50" width="350" height="150" fill="var(--ink)"/>
+            <rect x="135" y="60" width="330" height="130" fill="var(--orange)"/>
+            <g stroke="rgba(0,0,0,0.16)" stroke-width="0.6">
+              <line x1="135" y1="92" x2="465" y2="92"/>
+              <line x1="135" y1="125" x2="465" y2="125"/>
+              <line x1="135" y1="158" x2="465" y2="158"/>
+              <line x1="190" y1="60" x2="190" y2="190"/>
+              <line x1="245" y1="60" x2="245" y2="190"/>
+              <line x1="300" y1="60" x2="300" y2="190"/>
+              <line x1="355" y1="60" x2="355" y2="190"/>
+              <line x1="410" y1="60" x2="410" y2="190"/>
+            </g>
+            <text x="300" y="140" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="800" font-size="66" fill="#0A0A0A" letter-spacing="2">MEDIA270</text>
+            <g stroke="currentColor" stroke-width="0.8" opacity="0.45">
+              <line x1="488" y1="50" x2="488" y2="200"/>
+              <line x1="482" y1="50" x2="494" y2="50"/>
+              <line x1="482" y1="200" x2="494" y2="200"/>
+            </g>
+            <text x="500" y="128" text-anchor="start" font-family="DM Mono, monospace" font-size="11" fill="currentColor" opacity="0.65" transform="rotate(90 500 128)">2240 mm</text>
+            <circle cx="70" cy="210" r="14" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="70" cy="210" r="5" fill="currentColor"/>
+            <circle cx="360" cy="210" r="14" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="360" cy="210" r="5" fill="currentColor"/>
+            <circle cx="395" cy="210" r="14" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="395" cy="210" r="5" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+
+      <aside class="spec-stack">
+        <span class="corner-tl"></span><span class="corner-tr"></span>
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <div class="spec-head">
+          <span class="label">PH-3 / Outdoor</span>
+          <span class="mono">REV. 2024</span>
+        </div>
+        <div class="spec-row">
+          <span class="k">Yan Ekran <em class="k-mult">×2</em></span>
+          <div class="v"><span class="big">3840</span><span class="x">×</span><span class="big">2240</span><span class="unit">mm</span></div>
+        </div>
+        <div class="spec-row">
+          <span class="k">Arka Ekran</span>
+          <div class="v"><span class="big">2400</span><span class="x">×</span><span class="big">2240</span><span class="unit">mm</span></div>
+        </div>
+        <div class="spec-row">
+          <span class="k">Çözünürlük <em class="k-mult">/ Yan</em></span>
+          <div class="v"><span class="big">2480</span><span class="x">×</span><span class="big">560</span><span class="unit">px</span></div>
+        </div>
+        <div class="spec-row">
+          <span class="k">Parlaklık</span>
+          <div class="v"><span class="big">6500</span><span class="unit">cd/m²</span></div>
+        </div>
+        <div class="spec-row">
+          <span class="k">Operasyon</span>
+          <div class="v"><span class="big">12</span><span class="unit">saat / gün</span><span class="unit"><span class="dot-on"></span>aktif</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- =============== CTA BAND =============== -->
+<section class="cta-band" id="teklif">
+  <div class="wrap">
+    <div class="cta-stack">
+      <div class="cta-eyebrow">
+        <span class="mono" style="color:var(--orange)">/ 04</span>
+        <span class="label">Teklif Al</span>
+      </div>
+      <h2 class="h-title cta-h2">
+        Bir Sonraki Kampanyanız<br/>
+        <span class="accent">24 Saat</span> İçinde Sokakta.
+      </h2>
+      <p class="cta-lede">
+        Brief'inizi paylaşın — rota önerisi, izlenim tahmini ve fiyat teklifi 24 saat
+        içinde mailinizde.
+      </p>
+      <div class="cta-actions">
+        <a href="mailto:teklif@media270.com?subject=Teklif%20Talebi" class="btn btn-primary lg">Teklif Al <span class="arrow">→</span></a>
+        <a href="#iletisim" class="btn btn-ghost-dark">İletişime Geç</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== FOOTER =============== -->
+<footer id="iletisim">
+  <div class="wrap row">
+    <a class="logo" href="#">
+      <img src="m270_lockup_color.svg" alt="Media270" height="52" style="display:block;">
+    </a>
+    <div class="social">
+      <a href="#">Instagram</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">YouTube</a>
+    </div>
+    <div class="copyright">© 2026 MEDIA270 · İSTANBUL</div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var el = document.querySelector('.icon-route');
+    if(!el) return;
+    var obs = new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting){
+        el.classList.add('is-visible');
+        obs.unobserve(el);
+      }
+    }, {threshold: 0.4});
+    obs.observe(el);
+  })();
+</script>
+
+<!-- =============== TWEAKS =============== -->
+<div id="tweaks-root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" data-presets="react">
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "mood": "operational",
+    "accent": "#FF5E1A",
+    "tempo": "standard"
+  }/*EDITMODE-END*/;
+
+  function App(){
+    const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+    React.useEffect(() => {
+      document.body.setAttribute('data-mood', t.mood);
+      document.body.setAttribute('data-tempo', t.tempo);
+      document.documentElement.style.setProperty('--orange', t.accent);
+    }, [t]);
+    return (
+      <TweaksPanel title="Media270 — Tweaks">
+        <TweakSection label="Mood" />
+        <TweakRadio label="Yüzey" value={t.mood}
+          options={[
+            {value:'operational', label:'Op.'},
+            {value:'editorial',   label:'Ed.'},
+            {value:'night',       label:'Gece'},
+          ]}
+          onChange={(v) => setTweak('mood', v)} />
+        <TweakSection label="Aksan" />
+        <TweakColor label="Renk" value={t.accent}
+          options={['#FF5E1A','#22D3EE','#C6F24E','#0A0A0A']}
+          onChange={(v) => setTweak('accent', v)} />
+        <TweakSection label="Tempo" />
+        <TweakRadio label="Ritim" value={t.tempo}
+          options={[
+            {value:'compact',     label:'Sıkı'},
+            {value:'standard',    label:'Std.'},
+            {value:'theatrical',  label:'Sahne'},
+          ]}
+          onChange={(v) => setTweak('tempo', v)} />
+      </TweaksPanel>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<App/>);
+</script>
+
+</body>
+</html>

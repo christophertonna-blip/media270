@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 48" width="72" height="48">
+  <rect width="72" height="48" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1"/>
+  <!-- grid -->
+  <g stroke="#0A0A0A" stroke-width="0.5" opacity="0.35">
+    <line x1="0" y1="12" x2="72" y2="12"/>
+    <line x1="0" y1="24" x2="72" y2="24"/>
+    <line x1="0" y1="36" x2="72" y2="36"/>
+    <line x1="18" y1="0" x2="18" y2="48"/>
+    <line x1="36" y1="0" x2="36" y2="48"/>
+    <line x1="54" y1="0" x2="54" y2="48"/>
+  </g>
+  <!-- route -->
+  <path d="M6,36 L18,36 L18,24 L36,24 L36,12 L48,12 L48,22"
+        fill="none" stroke="#FF5E1A" stroke-width="1.5" stroke-linejoin="miter"/>
+  <!-- current position pin -->
+  <circle cx="48" cy="22" r="4" fill="#FF5E1A"/>
+  <circle cx="48" cy="22" r="7" fill="none" stroke="#FF5E1A" stroke-width="1" opacity="0.3"/>
+</svg>

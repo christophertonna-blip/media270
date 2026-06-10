@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Renkler ─────────────────────────────────────────── */
+  --color-bg:          #FFFFFF;
+  --color-ink:         #0A0A0A;
+  --color-orange:      #FF5E1A;
+  --color-cream:       #F5F3EF;
+  --color-band:        #0A0A0A;
+  --color-band-ink:    #FFFFFF;
+  --color-line:        rgba(10, 10, 10, 0.10);
+  --color-line-strong: rgba(10, 10, 10, 0.18);
+  --color-muted:       rgba(10, 10, 10, 0.60);
+
+  /* ── Fontlar ─────────────────────────────────────────── */
+  --font-sans:  'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-title: "Barlow Condensed", sans-serif;
+  --font-label: "Rajdhani", sans-serif;
+  --font-mono:  "DM Mono", monospace;
+  --font-body:  "JetBrains Mono", "DM Mono", monospace;
+}
+
+/* ── Mood: editorial ─────────────────────────────────────── */
+:root[data-mood="editorial"] {
+  --color-bg:          #F1ECE2;
+  --color-cream:       #E6DECC;
+  --color-line:        rgba(10, 10, 10, 0.14);
+  --color-line-strong: rgba(10, 10, 10, 0.22);
+}
+
+/* ── Mood: night ─────────────────────────────────────────── */
+:root[data-mood="night"] {
+  --color-bg:          #0A0A0A;
+  --color-ink:         #FAFAFA;
+  --color-cream:       #141414;
+  --color-band:        #FAFAFA;
+  --color-band-ink:    #0A0A0A;
+  --color-muted:       rgba(255, 255, 255, 0.55);
+  --color-line:        rgba(255, 255, 255, 0.10);
+  --color-line-strong: rgba(255, 255, 255, 0.18);
+}
+
+/* ── Tempo: compact ──────────────────────────────────────── */
+:root[data-tempo="compact"] {
+  --hero-size:       84px;
+  --section-size:    60px;
+  --cta-size:        80px;
+  --section-pad:     96px;
+  --hero-pad-top:    80px;
+  --hero-pad-bottom: 96px;
+}
+
+/* ── Tempo: standard (default) ───────────────────────────── */
+:root[data-tempo="standard"],
+:root:not([data-tempo]) {
+  --hero-size:       104px;
+  --section-size:    72px;
+  --cta-size:        96px;
+  --section-pad:     140px;
+  --hero-pad-top:    120px;
+  --hero-pad-bottom: 140px;
+}
+
+/* ── Tempo: theatrical ───────────────────────────────────── */
+:root[data-tempo="theatrical"] {
+  --hero-size:       140px;
+  --section-size:    96px;
+  --cta-size:        128px;
+  --section-pad:     200px;
+  --hero-pad-top:    160px;
+  --hero-pad-bottom: 200px;
+}
+
+/* ── Global resets ───────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  transition: background-color 0.35s ease, color 0.35s ease;
+  min-width: 1280px;
+}
+
+/* ── Decorative grid background ──────────────────────────── */
+.grid-bg {
+  background-image:
+    linear-gradient(var(--color-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.grid-bg--band {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* ── Content container ───────────────────────────────────── */
+.container {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 48px;
+}
+
+/* ── Section vertical rhythm ─────────────────────────────── */
+.section-pad {
+  padding-block: var(--section-pad, 140px);
+}
+
+/* ── Scroll göstergesi bounce animasyonu ─────────────────── */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(6px); }
+}
