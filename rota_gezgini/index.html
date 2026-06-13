@@ -54,7 +54,7 @@
   .head-dot{width:13px;height:13px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(255,94,26,0.20),0 0 0 8px rgba(255,94,26,0.10);}
   #errbar{position:absolute;top:0;left:0;right:0;z-index:20;display:none;padding:14px 20px;background:var(--accent);color:#fff;font-family:'DM Mono',monospace;font-size:13px;line-height:1.5;}
   #errbar b{font-weight:400;text-decoration:underline;}
-  @media (max-width:640px){
+  @media (max-width:860px){
     .bracket{display:none;}
     #menu-toggle{display:flex;}
     #header{top:16px;left:18px;} #header h1{font-size:24px;} #header .eyebrow{font-size:10px;}
@@ -186,7 +186,7 @@ if (!CONFIG.token || !CONFIG.token.startsWith('pk.')) {
     map.flyTo({...map.cameraForBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:padNum()}),pitch:18,bearing:0,duration:2200}); }
 
   function selectRoute(i){ if(!map)return; setMenu(false); curIdx=i; markActiveBtn(i); openDropdown(i); drawToken++; clearActive(); followActive=false; drawPaused=false;
-    map.setPaintProperty('all-dim','line-opacity',0); showNames(false);
+    map.setPaintProperty('all-dim','line-opacity',0.22); showNames(true);
     map.getSource('faint').setData(clone(ROUTES[i].line));
     hideAllPts(); ROUTES[i].pts.forEach(p=>{ if(p.el)p.el.style.display='block'; });
     activePts=ROUTES[i].pts;
@@ -196,13 +196,13 @@ if (!CONFIG.token || !CONFIG.token.startsWith('pk.')) {
 
   function resetReveal(){ activePts.forEach(p=>{ if(p.lbl)p.lbl.style.opacity=0; if(p.item)p.item.classList.remove('active'); }); }
   function startPreview(){ if(curIdx<0||!map) return; const i=curIdx; drawPaused=false;
-    resetReveal(); clearActive(); showNames(false);
+    resetReveal(); clearActive(); showNames(false); map.setPaintProperty('all-dim','line-opacity',0);
     const start=ROUTES[i].line.geometry.coordinates[0]; followActive=false;
     map.easeTo({center:start,zoom:FZ,pitch:CONFIG.previewPitch,bearing:0,duration:CONFIG.zoomStartMs});
     map.once('moveend',()=>{ followActive=true; });
     startDraw(i); setControls('playing'); }
 
-  function stopReset(){ if(!map)return; drawToken++; drawPaused=false; clearActive(); resetReveal();
+  function stopReset(){ if(!map)return; drawToken++; drawPaused=false; clearActive(); resetReveal(); showNames(true); map.setPaintProperty('all-dim','line-opacity',0.22);
     const bb=turf.bbox(ROUTES[curIdx].line);
     map.flyTo({...map.cameraForBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:padNum()}),pitch:CONFIG.routePitch,bearing:0,duration:1000});
     setControls('ready'); }
@@ -218,7 +218,9 @@ if (!CONFIG.token || !CONFIG.token.startsWith('pk.')) {
       const p=Math.min(elapsed/dur,1); const dist=Math.max(total*trap(p),0.0001);
       map.getSource('active').setData(turf.lineSliceAlong(line,0,dist,{units:'kilometers'}));
       const head=turf.along(line,dist,{units:'kilometers'}).geometry.coordinates; headMarker.setLngLat(head);
-      activePts.forEach(pp=>{ if(pp.along<=dist){ if(pp.lbl)pp.lbl.style.opacity=1; if(pp.item)pp.item.classList.add('active'); } });
+      let lastIdx=-1; activePts.forEach((pp,idx)=>{ if(pp.along<=dist) lastIdx=idx; });
+      if(p>=1){ activePts.forEach(pp=>{ if(pp.lbl)pp.lbl.style.opacity=1; if(pp.item)pp.item.classList.add('active'); }); }
+      else { activePts.forEach((pp,idx)=>{ if(pp.lbl)pp.lbl.style.opacity=(idx===lastIdx)?1:0; if(pp.item)pp.item.classList.toggle('active',pp.along<=dist); }); }
       if(CONFIG.cameraFollow && followActive && !drawPaused){ const c=map.getCenter();
         map.setCenter([c.lng+(head[0]-c.lng)*CONFIG.followLerp, c.lat+(head[1]-c.lat)*CONFIG.followLerp]); }
       if(p<1) requestAnimationFrame(frame); else { headMarker.getElement().style.display='none'; setControls('done'); }
