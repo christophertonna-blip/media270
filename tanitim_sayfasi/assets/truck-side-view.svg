@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 290" fill="none">
+  
+  <g stroke="#0A0A0A" stroke-width="0.6" opacity="0.16">
+    <line x1="0" y1="265" x2="580" y2="265"></line>
+    <line x1="0" y1="276" x2="580" y2="276"></line>
+  </g>
+
+  
+  <g stroke="#0A0A0A" stroke-width="0.8" opacity="0.45">
+    <line x1="172" y1="20" x2="528" y2="20"></line>
+    <line x1="172" y1="14" x2="172" y2="26"></line>
+    <line x1="528" y1="14" x2="528" y2="26"></line>
+  </g>
+  <text x="350" y="11" text-anchor="middle" font-family="&#39;DM Mono&#39;, monospace" font-size="11" fill="#0A0A0A" opacity="0.65">3840 MM</text>
+
+  
+  <path d="M 64 242 L 64 150 L 80 126 L 172 126 L 172 242 Z" fill="none" stroke="#0A0A0A" stroke-width="1.5"></path>
+  <path d="M 84 150 L 95 134 L 140 134 L 140 150 Z" fill="#0A0A0A" opacity="0.1"></path>
+  <line x1="64" y1="206" x2="172" y2="206" stroke="#0A0A0A" stroke-width="0.8" opacity="0.3"></line>
+
+  
+  <rect x="172" y="34" width="356" height="208" fill="#0A0A0A"></rect>
+  <rect x="182" y="44" width="336" height="188" fill="#FF5E1A"></rect>
+  <g stroke="rgba(0,0,0,0.16)" stroke-width="0.6">
+    <line x1="182" y1="91" x2="518" y2="91"></line>
+    <line x1="182" y1="138" x2="518" y2="138"></line>
+    <line x1="182" y1="185" x2="518" y2="185"></line>
+    <line x1="238" y1="44" x2="238" y2="232"></line>
+    <line x1="294" y1="44" x2="294" y2="232"></line>
+    <line x1="350" y1="44" x2="350" y2="232"></line>
+    <line x1="406" y1="44" x2="406" y2="232"></line>
+    <line x1="462" y1="44" x2="462" y2="232"></line>
+  </g>
+  <text x="350" y="155" text-anchor="middle" font-family="&#39;Barlow Condensed&#39;, sans-serif" font-weight="800" font-size="60" fill="#0A0A0A" letter-spacing="1.5">MEDIA270</text>
+
+  
+  <g stroke="#0A0A0A" stroke-width="0.8" opacity="0.45">
+    <line x1="544" y1="34" x2="544" y2="242"></line>
+    <line x1="538" y1="34" x2="550" y2="34"></line>
+    <line x1="538" y1="242" x2="550" y2="242"></line>
+  </g>
+  <text x="556" y="138" text-anchor="middle" font-family="&#39;DM Mono&#39;, monospace" font-size="11" fill="#0A0A0A" opacity="0.65" transform="rotate(90 556 138)">2240 MM</text>
+
+  
+  <text x="184" y="257" text-anchor="start" font-family="&#39;DM Mono&#39;, monospace" font-size="9" fill="#0A0A0A" opacity="0.5">ÖN</text>
+  <text x="516" y="257" text-anchor="end" font-family="&#39;DM Mono&#39;, monospace" font-size="9" fill="#0A0A0A" opacity="0.5">ARKA</text>
+
+  
+  <circle cx="108" cy="250" r="15" fill="none" stroke="#0A0A0A" stroke-width="1.5"></circle>
+  <circle cx="108" cy="250" r="5" fill="#0A0A0A"></circle>
+  <circle cx="420" cy="250" r="15" fill="none" stroke="#0A0A0A" stroke-width="1.5"></circle>
+  <circle cx="420" cy="250" r="5" fill="#0A0A0A"></circle>
+  <circle cx="472" cy="250" r="15" fill="none" stroke="#0A0A0A" stroke-width="1.5"></circle>
+  <circle cx="472" cy="250" r="5" fill="#0A0A0A"></circle>
+</svg>

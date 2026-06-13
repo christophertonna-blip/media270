@@ -1,0 +1,73 @@
+MEDIA270 — TANITIM DOSYASI · DÜZENLENEBİLİR KAYNAK
+====================================================
+
+KLASÖR İÇERİĞİ
+--------------
+index.html                  → Ana dosya (tüm metin + sayfalar burada)
+styles.css                  → Tasarım / renk / font tanımları
+image-slot.js               → Fotoğraf yuvası bileşeni
+.image-slots.state.json     → Yüklediğiniz 6 fotoğraf (gömülü veri)
+assets/                     → Logolar + LED truck yan görünüm çizimi
+fonts/                      → Barlow Condensed, Rajdhani, DM Mono, JetBrains Mono
+
+
+VS CODE'DA NASIL AÇILIR (ÖNEMLİ)
+--------------------------------
+1. Klasörü VS Code ile açın (File → Open Folder).
+2. "Live Server" eklentisini kurun (Extensions sekmesi → "Live Server" ara → Install).
+3. index.html dosyasına sağ tıklayın → "Open with Live Server".
+   Tarayıcıda http://127.0.0.1:5500/index.html açılır; fotoğraflar ve fontlar görünür.
+
+NEDEN Live Server?
+index.html'i çift tıklayıp doğrudan (file://) açarsanız, tarayıcı güvenlik
+kuralı yüzünden fotoğraflar görünmez. Live Server küçük bir yerel sunucu
+çalıştırdığı için her şey düzgün yüklenir. (Metni/tasarımı düzenlemek için
+file:// yeterli; sadece fotoğraflar görünmez.)
+
+
+NE DÜZENLEYEBİLİRSİNİZ
+----------------------
+• Tüm metinler, spec'ler, başlıklar → index.html içinde (Ctrl+F ile arayın).
+• Renk / font / boşluk → styles.css.
+• Sayfa numaraları ve etiketler → index.html'deki data-screen-label.
+
+
+FOTOĞRAFLARI DEĞİŞTİRMEK
+------------------------
+Yüklediğiniz fotoğraflar .image-slots.state.json içinde gömülü. Yerel
+makinede sürükle-bırak ile yeni foto eklemek KALICI olmaz (kaydetme
+bu ortama özgü). Fotoğrafı kalıcı değiştirmek için en kolay yol:
+ilgili <image-slot ...> etiketini index.html içinde normal bir
+<img src="foto.jpg"> ile değiştirip foto dosyasını klasöre koymak.
+İsterseniz bunu sizin için yapabilirim.
+
+
+WEB SİTESİNE KOYMAK
+-------------------
+Bu klasör artık "tanitim_sayfasi" adıyla repo'nun kök dizininde — GitHub
+Pages üzerinden media270.com/tanitim_sayfasi/ adresinden yayınlanır.
+
+
+ERİŞİM KODU (GİRİŞ KORUMASI)
+----------------------------
+Sayfa açıldığında bir kod ekranı çıkar. Şu anki kod:
+
+    M270-PARTNER26
+
+Bu, tarayıcı tarafında çalışan basit bir kontroldür (gerçek bir sunucu
+girişi değildir) — arama motorlarından gizlemek ve rastgele ziyaretçiyi
+durdurmak için yeterlidir, ancak sayfa kaynağı incelenirse kodun hash'i
+görülebilir.
+
+Kodu değiştirmek için:
+1. Yeni kodu büyük harfle SHA-256'dan geçirin, örn. terminalde:
+     printf '%s' "YENI-KOD" | shasum -a 256
+2. index.html içinde "ACCESS GATE" bölümünün altındaki <script>'te
+   HASH = '...' satırını çıkan değerle değiştirin.
+
+Not: Bu kontrol crypto.subtle (Web Crypto) kullanır — bu yüzden sayfanın
+https:// üzerinden (veya Live Server ile http://127.0.0.1) açılması
+gerekir; düz file:// üzerinden açılırsa kod kabul edilmez.
+
+Kullanıcı doğru kodu girdiğinde tarayıcısında (localStorage) hatırlanır;
+bir daha kod girmesi gerekmez.
