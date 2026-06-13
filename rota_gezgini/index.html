@@ -17,12 +17,16 @@
   #header{position:absolute;top:38px;left:48px;z-index:5;pointer-events:none;}
   #header .eyebrow{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin:0 0 4px;}
   #header h1{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:34px;line-height:0.92;text-transform:uppercase;color:var(--ink);margin:0;}
-  #menu{position:absolute;top:116px;left:48px;z-index:5;display:flex;flex-direction:column;gap:6px;width:248px;max-height:calc(100vh - 160px);overflow-y:auto;}
+  #menu-toggle{display:none;position:absolute;top:18px;right:18px;z-index:9;width:46px;height:46px;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:2px;background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);cursor:pointer;font-size:20px;line-height:1;color:var(--ink);}
+  #menu-toggle:hover{border-color:rgba(10,10,10,0.4);}
+  /* Mapbox logo/attribution gizleme — Mapbox ToS attribution gerektirir, kendi planini kontrol et */
+  .mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib{display:none !important;}
+  #menu{position:absolute;top:108px;left:48px;z-index:7;display:flex;flex-direction:column;gap:5px;width:200px;max-height:calc(100vh - 150px);overflow-y:auto;}
   .route-group{display:flex;flex-direction:column;}
-  .route-btn{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:2px;background:rgba(255,255,255,0.85);cursor:pointer;backdrop-filter:blur(6px);transition:all .15s;text-align:left;}
+  .route-btn{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:2px;background:rgba(255,255,255,0.85);cursor:pointer;backdrop-filter:blur(6px);transition:all .15s;text-align:left;}
   .route-btn:hover{border-color:rgba(10,10,10,0.35);}
   .route-btn .code{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);}
-  .route-btn .nm{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink);line-height:1.1;}
+  .route-btn .nm{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink);line-height:1.1;}
   .route-btn .sb{font-family:'DM Mono',monospace;font-size:10px;color:rgba(10,10,10,0.55);margin-top:2px;}
   .route-btn .meta{display:flex;flex-direction:column;}
   .route-btn.active{background:var(--accent);border-color:var(--accent);}
@@ -50,11 +54,13 @@
   .head-dot{width:13px;height:13px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(255,94,26,0.20),0 0 0 8px rgba(255,94,26,0.10);}
   #errbar{position:absolute;top:0;left:0;right:0;z-index:20;display:none;padding:14px 20px;background:var(--accent);color:#fff;font-family:'DM Mono',monospace;font-size:13px;line-height:1.5;}
   #errbar b{font-weight:400;text-decoration:underline;}
-  @media (max-width:640px){
+  @media (max-width:860px){
     .bracket{display:none;}
-    #header{top:14px;left:16px;} #header h1{font-size:22px;} #header .eyebrow{font-size:10px;}
-    #menu{top:54px;left:12px;width:210px;max-height:calc(100vh - 130px);}
-    .route-btn{padding:10px 12px;} .route-btn .sb{display:none;}
+    #menu-toggle{display:flex;}
+    #header{top:16px;left:18px;} #header h1{font-size:24px;} #header .eyebrow{font-size:10px;}
+    #menu{top:0;left:0;bottom:0;height:100vh;width:min(78vw,280px);max-height:100vh;padding:78px 14px 18px;gap:6px;background:rgba(242,240,236,0.97);backdrop-filter:blur(10px);border-right:1px solid var(--line);transform:translateX(-110%);transition:transform .28s ease;z-index:8;}
+    #menu.open{transform:translateX(0);}
+    .route-btn .sb{display:none;}
     #controls{bottom:18px;flex-wrap:wrap;justify-content:center;max-width:92vw;} .ctrl{padding:11px 16px;font-size:12px;}
     #wordmark{bottom:14px;right:16px;font-size:10px;} .poi .lbl{font-size:11px;}
   }
@@ -63,6 +69,7 @@
   <div class="bracket tl"></div><div class="bracket tr"></div><div class="bracket bl"></div><div class="bracket br"></div>
   <div id="errbar"></div>
   <div id="header"><p class="eyebrow">MEDIA270 · ROTALAR</p><h1>Güzergah Ağı</h1></div>
+  <button id="menu-toggle" aria-label="Menü">☰</button>
   <div id="menu"></div>
   <div id="controls">
     <button id="btn-preview" class="ctrl primary">▶ Ön İzleme</button>
@@ -110,6 +117,8 @@ if (!CONFIG.token || !CONFIG.token.startsWith('pk.')) {
     r.pts=pts;
   });
   buildMenu();   // <-- artik load beklemiyor
+  function setMenu(open){ C('menu').classList.toggle('open',open); C('menu-toggle').innerHTML=open?'✕':'☰'; }
+  C('menu-toggle').onclick=()=>setMenu(!C('menu').classList.contains('open'));
 
   function buildMenu(){ const menu=C('menu'); menu.innerHTML='';
     ROUTES.forEach((r,i)=>{ const g=document.createElement('div'); g.className='route-group';
@@ -170,13 +179,13 @@ if (!CONFIG.token || !CONFIG.token.startsWith('pk.')) {
   function hideAllPts(){ ROUTES.forEach(r=>r.pts.forEach(p=>{ if(p.el)p.el.style.display='none'; if(p.lbl)p.lbl.style.opacity=0; if(p.item)p.item.classList.remove('active'); })); }
   function clearActive(){ if(map)map.getSource('active').setData({type:'FeatureCollection',features:[]}); if(headMarker)headMarker.getElement().style.display='none'; }
 
-  function resetView(){ if(!map)return; curIdx=-1; drawToken++; markActiveBtn(-1); openDropdown(-1); clearActive(); setControls('hidden');
+  function resetView(){ if(!map)return; setMenu(false); curIdx=-1; drawToken++; markActiveBtn(-1); openDropdown(-1); clearActive(); setControls('hidden');
     map.getSource('faint').setData({type:'FeatureCollection',features:[]});
     hideAllPts(); showNames(true); map.setPaintProperty('all-dim','line-opacity',0.22);
     const bb=turf.bbox({type:'FeatureCollection',features:ROUTES.map(r=>r.line)});
     map.flyTo({...map.cameraForBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:padNum()}),pitch:18,bearing:0,duration:2200}); }
 
-  function selectRoute(i){ if(!map)return; curIdx=i; markActiveBtn(i); openDropdown(i); drawToken++; clearActive(); followActive=false; drawPaused=false;
+  function selectRoute(i){ if(!map)return; setMenu(false); curIdx=i; markActiveBtn(i); openDropdown(i); drawToken++; clearActive(); followActive=false; drawPaused=false;
     map.setPaintProperty('all-dim','line-opacity',0); showNames(false);
     map.getSource('faint').setData(clone(ROUTES[i].line));
     hideAllPts(); ROUTES[i].pts.forEach(p=>{ if(p.el)p.el.style.display='block'; });
