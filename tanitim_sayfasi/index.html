@@ -4,6 +4,20 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Media270 — Tanıtım Dosyası</title>
+<script>
+  (function () {
+    try {
+      if (location.search.indexOf('full=1') !== -1) {
+        sessionStorage.setItem('m270_force_desktop', '1');
+        return;
+      }
+      if (sessionStorage.getItem('m270_force_desktop') === '1') return;
+      if (window.matchMedia('(max-width: 640px)').matches) {
+        location.replace('mobil.html');
+      }
+    } catch (e) {}
+  })();
+</script>
 <link rel="stylesheet" href="styles.css" />
 <script src="image-slot.js"></script>
 <style>
@@ -486,10 +500,6 @@
   </svg>
 </template>
 <div class="doc">
-<a class="mobile-banner no-print" href="mobil.html">
-  <span>MOBİL ÖZET MEVCUT<span class="sub">Fiyat · Ürünler · İletişim — kısa sürüm</span></span>
-  <span class="go">Aç →</span>
-</a>
 
 <!-- ============================================================
      PAGE 01 · KAPAK (NIGHT)
