@@ -175,7 +175,7 @@ if (!CONFIG.token || !CONFIG.token.startsWith('pk.')) {
 
   function markActiveBtn(i){ document.querySelectorAll('.route-btn').forEach(b=>b.classList.toggle('active',+b.dataset.i===i)); }
   function openDropdown(i){ ROUTES.forEach((r,k)=>r.dropdown.classList.toggle('open',k===i)); }
-  function showNames(s){ nameMarkers.forEach(el=>el.classList.toggle('hidden',!s)); }
+  function showNames(s){ nameMarkers.forEach(el=>{ el.style.display = s ? 'flex' : 'none'; el.classList.toggle('hidden',!s); }); }
   function hideAllPts(){ ROUTES.forEach(r=>r.pts.forEach(p=>{ if(p.el)p.el.style.display='none'; if(p.lbl)p.lbl.style.opacity=0; if(p.item)p.item.classList.remove('active'); })); }
   function clearActive(){ if(map)map.getSource('active').setData({type:'FeatureCollection',features:[]}); if(headMarker)headMarker.getElement().style.display='none'; }
 
