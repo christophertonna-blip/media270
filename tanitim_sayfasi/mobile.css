@@ -227,6 +227,7 @@ h1.h-tr, h2.h-tr {
 }
 h1.h-tr { font-size: clamp(2.5rem, 13vw, 3.4rem); margin-top: 0.75rem; }
 h2.h-tr { font-size: clamp(1.9rem, 9vw, 2.5rem); margin-top: 0.5rem; }
+.h-tr .sml { display: block; font-size: 0.5em; color: var(--muted); margin-top: 0.2em; }
 
 .h-en {
   margin-top: 0.6rem;
