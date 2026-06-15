@@ -146,8 +146,15 @@
   .cover-hero .img-col {
     position: relative; display: flex; align-items: stretch;
   }
-  .cover-hero image-slot {
+  .cover-hero .img-col video,
+  .cover-hero .img-col .video-poster {
     width: 100%; height: 100%; min-height: 130mm;
+    object-fit: cover; display: block;
+  }
+  .cover-hero .img-col .video-poster { display: none; }
+  @media print {
+    .cover-hero .img-col video { display: none; }
+    .cover-hero .img-col .video-poster { display: block; }
   }
 
   /* FAQ items even tighter for bilingual */
@@ -542,7 +549,10 @@
       </div>
 
       <div class="img-col">
-        <image-slot id="cover-hero" shape="rect" placeholder="LED truck · gece çekimi / kapak görseli" fit="cover"></image-slot>
+        <video autoplay muted loop playsinline poster="assets/cover-hero-poster.jpg">
+          <source src="assets/cover-hero.mp4" type="video/mp4">
+        </video>
+        <img class="video-poster" src="assets/cover-hero-poster.jpg" alt="" />
       </div>
     </div>
 
