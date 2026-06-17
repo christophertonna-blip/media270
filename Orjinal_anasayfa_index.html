@@ -480,6 +480,50 @@
   .quick-spec .v .accent{color:var(--orange);}
   .quick-spec .head{padding:16px 24px;border-bottom:1px solid var(--band-line);display:flex;justify-content:space-between;color:color-mix(in oklab, var(--band-ink) 55%, transparent);}
 
+  /* ---------- Products (Ürün Ailesi) ---------- */
+  .products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .product-card-web{
+    border:1px solid var(--line-strong);padding:36px 32px 32px;
+    background:var(--bg);position:relative;display:flex;flex-direction:column;
+  }
+  .product-card-web.flagship{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .product-card-web.flagship .pct{color:var(--orange);}
+  .product-card-web.flagship .pc-divider{border-color:rgba(255,255,255,0.14);}
+  .product-card-web.flagship .pc-list li .k{color:rgba(255,255,255,0.55);}
+  .product-card-web .pct{
+    font-family:var(--f-mono);font-size:11px;color:var(--orange);
+    display:flex;align-items:center;gap:8px;letter-spacing:0.04em;
+  }
+  .product-card-web .pc-h3{
+    font-family:var(--f-title);font-weight:800;text-transform:uppercase;
+    font-size:34px;margin-top:18px;line-height:1;
+  }
+  .product-card-web .pc-sub{
+    margin-top:8px;font-family:var(--f-mono);font-size:11px;
+    color:var(--muted);letter-spacing:0.04em;
+  }
+  .product-card-web.flagship .pc-sub{color:rgba(255,255,255,0.55);}
+  .product-card-web .pc-divider{margin:24px 0;border:none;border-top:1px solid var(--line);}
+  .product-card-web .pc-list{list-style:none;display:flex;flex-direction:column;gap:0;margin-top:0;}
+  .product-card-web .pc-list li{
+    display:flex;justify-content:space-between;align-items:start;gap:12px;
+    padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;
+  }
+  .product-card-web.flagship .pc-list li{border-color:rgba(255,255,255,0.1);}
+  .product-card-web .pc-list li:last-child{border-bottom:none;}
+  .product-card-web .pc-list li .k{
+    font-family:var(--f-label);font-weight:600;text-transform:uppercase;
+    letter-spacing:0.14em;font-size:11px;color:var(--muted);white-space:nowrap;
+  }
+  .product-card-web .pc-list li .v{font-family:var(--f-mono);font-size:12px;text-align:right;line-height:1.4;}
+  .products-footer{
+    margin-top:24px;padding:22px 28px;
+    border:1px solid var(--line-strong);background:var(--cream);
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:var(--f-mono);font-size:12px;color:var(--muted);
+  }
+  .products-footer .accent-dot{color:var(--orange);margin-right:8px;}
+
   /* ---------- Footer ---------- */
   footer{padding:60px 0 50px;border-top:1px solid var(--line);}
   footer .row{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;gap:40px;}
@@ -519,14 +563,15 @@
         <span class="label">İstanbul · Mobil LED Reklam</span>
       </div>
       <h1 class="h-title hero-title fadeUp d2">
-        Markanız<br/>
-        Şehrin Ritmiyle<br/>
-        <span class="accent">Hareket Eder.</span>
+        Şehrin<br/>
+        Ritmi<br/>
+        Bugün<br/>
+        <span class="accent">Sizin.</span>
       </h1>
       <p class="hero-sub fadeUp d3">
-        Boğaz'dan Maslak'a, Kadıköy'den Levent'e — 9.92 × 2.24 m PH-3 outdoor LED truck'ımız
-        kampanyalarınızı şehrin tam göbeğinde, GPS-doğrulamalı rotalarla yayınlar.
-        Ajans ve etkinlik ekipleri için, ölçülebilir dış mekan reklamcılığı.
+        Bir tam gün, tek bir marka. Media270'in LED ekranı yalnızca sizin için yayın yapar —
+        Boğaz'dan Maslak'a, etkinlik alanından lansman noktasına. Full Day, Half Day ve
+        Paylaşımlı formatlarla her kampanyaya uygun çözüm.
       </p>
       <div class="hero-actions fadeUp d4">
         <a href="#teklif" class="btn btn-primary">Teklif Al <span class="arrow">→</span></a>
@@ -535,9 +580,9 @@
       <div class="hero-meta fadeUp d4">
         <span class="mono">1 ARAÇ · İSTANBUL</span>
         <span class="sep"></span>
-        <span class="mono">PH-3 · 2480×560 PX</span>
+        <span class="mono">PH-3 · 1248×728 PX</span>
         <span class="sep"></span>
-        <span class="mono">İST-001 · MTK 2024</span>
+        <span class="mono">16 SAAT · DAY-EXCLUSIVE</span>
       </div>
     </div>
 
@@ -545,24 +590,24 @@
       <span class="corner-tl"></span><span class="corner-tr"></span>
       <span class="corner-bl"></span><span class="corner-br"></span>
       <div class="stat">
-        <div class="num">18<span class="unit">M</span></div>
+        <div class="num">16<span class="unit">H</span></div>
         <div class="desc">
-          <span class="k">Aylık İzlenim</span>
-          <span class="v">İstanbul ana arterlerinde, GPS rotalarıyla doğrulanmış.</span>
+          <span class="k">Tam Gün Exclusive</span>
+          <span class="v">08:00–24:00 kesintisiz yayın, tek marka.</span>
         </div>
       </div>
       <div class="stat">
         <div class="num">3<span class="unit unit-wide">EKRAN</span></div>
         <div class="desc">
-          <span class="k">Yayın Yüzeyi</span>
-          <span class="v">Tek araç üzerinde, 3 yönde eş zamanlı yayın.</span>
+          <span class="k">Eş Zamanlı Yayın</span>
+          <span class="v">Tek araç üzerinde, 3 yönde eş zamanlı — kör nokta yok.</span>
         </div>
       </div>
       <div class="stat">
-        <div class="num">24<span class="unit">H</span></div>
+        <div class="num">1<span class="unit unit-wide">ARAÇ</span></div>
         <div class="desc">
-          <span class="k">Kampanya Lansmanı</span>
-          <span class="v">Kreatif teslimden ilk yayına kadar.</span>
+          <span class="k">Şehir İçi Kapsama</span>
+          <span class="v">İstanbul'un ana arterlerinde, brief'e göre planlanan rota.</span>
         </div>
       </div>
     </aside>
@@ -578,18 +623,19 @@
         <h2 class="h-title">Üç Adımda<br/>Sokağa İner.</h2>
       </div>
       <p class="lede">
-        Brief'ten yayın raporuna kadar tüm süreç tek bir operasyon ekibi tarafından
-        yönetilir. Rota planlaması, kreatif teslim ve performans ölçümü standart.
+        Brief'ten kapanış raporuna kadar tüm süreç ~10 günlük bir operasyonel pencerede
+        tamamlanır. Rota planlaması, kreatif teslim ve GPS log + foto kanıt dahil raporlama standart.
       </p>
     </div>
 
     <div class="steps">
       <div class="step">
         <span class="step-no">/ 01</span>
-        <h3 class="step-title">Rota</h3>
+        <h3 class="step-title">Brief</h3>
         <p class="step-body">
-          Hedef demografiye göre saat ve bölge bazlı rota tasarımı. Trafik yoğunluğu,
-          etkinlik takvimi ve ilçe profiline göre optimize edilir.
+          Kısa bir e-posta yeterli — uzun form yok. İlk yanıt 24 saat içinde: rota önerisi,
+          takvim uygunluğu ve teklif. Kreatif hazırsa T–3'te teslim; yoksa içerik tasarımı
+          ayrı hizmet olarak sunulur.
         </p>
         <div class="icon icon-route">
           <svg viewBox="0 0 400 120" preserveAspectRatio="none">
@@ -617,8 +663,8 @@
           <span class="pin" style="left:384px;top:54px;"></span>
         </div>
         <div class="step-foot">
-          <span class="mono">5–7 İŞ GÜNÜ</span>
-          <span class="mono">GPS DOĞRULAMALI</span>
+          <span class="mono">T–7 · BRIEF</span>
+          <span class="mono">24 SAAT YANIT</span>
         </div>
       </div>
 
@@ -626,8 +672,9 @@
         <span class="step-no">/ 02</span>
         <h3 class="step-title">Yayın</h3>
         <p class="step-body">
-          PH-3 outdoor LED panellerde, 2480×560 piksel kreatif yayını. Statik, video veya
-          dinamik içerik — gün ışığında okunabilir 6500 cd/m² parlaklık.
+          Full Day pakette 16 saat (08:00–24:00), tek marka, kesintisiz. PH-3 outdoor LED,
+          1248×728 px kreatif yayını — statik veya video. Gün ışığında okunabilir 6500 cd/m²
+          parlaklık. Gün içi kreatif değişimi 2 saat içinde ekranda.
         </p>
         <div class="icon icon-broadcast">
           <span class="wave w2"></span>
@@ -642,10 +689,11 @@
 
       <div class="step">
         <span class="step-no">/ 03</span>
-        <h3 class="step-title">Ölçüm</h3>
+        <h3 class="step-title">Rapor</h3>
         <p class="step-body">
-          Yayın bitiminde kampanyanızın özet raporu tarafınıza iletilir. Detaylı metrikler
-          ileri aşamada müşteri panelinden takip edilebilecek.
+          Yayın bitiminden 24 saat içinde GPS log, rota haritası ve foto kanıttan oluşan
+          kapanış raporu iletilir. Saatlik bölge raporu (hangi bölge, hangi saat) talep
+          üzerine eklenir.
         </p>
         <div class="icon icon-metrics">
           <div class="bars">
@@ -662,10 +710,79 @@
           </div>
         </div>
         <div class="step-foot">
-          <span class="mono">PDF + CSV</span>
-          <span class="mono">48 SAAT İÇİNDE</span>
+          <span class="mono">T+1 · KAPANIŞ RAPORU</span>
+          <span class="mono">GPS LOG + FOTO KANIT</span>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== PRODUCTS =============== -->
+<section class="section" id="urunler">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span class="num">/ 02</span><span class="label">Ürün Ailesi</span></div>
+        <h2 class="h-title">Bir Ekran.<br/>Üç Format.</h2>
+      </div>
+      <p class="lede">
+        Full Day, Half Day ve Paylaşımlı — hangi ölçek, hangi bütçe olursa olsun aynı PH-3
+        ekran, aynı operasyon kalitesi. Tüm formatlarda GPS log ve rapor dahil.
+      </p>
+    </div>
+
+    <div class="products-grid">
+      <article class="product-card-web flagship">
+        <span class="corner-tl"></span><span class="corner-tr"></span>
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <div class="pct">/ 01 · FLAGSHIP</div>
+        <h3 class="pc-h3">Full Day<br/>Exclusive</h3>
+        <div class="pc-sub">16 saat · tam gün</div>
+        <hr class="pc-divider"/>
+        <ul class="pc-list">
+          <li><span class="k">Süre</span><span class="v">16 saat · 08:00–24:00</span></li>
+          <li><span class="k">Format</span><span class="v">Tek marka, kesintisiz</span></li>
+          <li><span class="k">Ekran</span><span class="v">3 yön · 2 yan + 1 arka</span></li>
+          <li><span class="k">Kullanım</span><span class="v">Lansman, etkinlik, peak kampanya</span></li>
+        </ul>
+      </article>
+
+      <article class="product-card-web">
+        <span class="corner-tl"></span><span class="corner-tr"></span>
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <div class="pct">/ 02 · FOCUSED</div>
+        <h3 class="pc-h3">Half Day<br/>Exclusive</h3>
+        <div class="pc-sub">8 saat · yarım gün blok</div>
+        <hr class="pc-divider"/>
+        <ul class="pc-list">
+          <li><span class="k">Süre</span><span class="v">8 saat · AM, PM veya tercih edilen blok</span></li>
+          <li><span class="k">Format</span><span class="v">Tek marka, kesintisiz</span></li>
+          <li><span class="k">Ekran</span><span class="v">3 yön</span></li>
+          <li><span class="k">Kullanım</span><span class="v">Açılış, bölgesel lansman, etkinlik öncesi</span></li>
+        </ul>
+      </article>
+
+      <article class="product-card-web">
+        <span class="corner-tl"></span><span class="corner-tr"></span>
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <div class="pct">/ 03 · FLEXIBLE</div>
+        <h3 class="pc-h3">Paylaşımlı<br/>Paket</h3>
+        <div class="pc-sub">Esnek bütçe · rotasyonlu yayın</div>
+        <hr class="pc-divider"/>
+        <ul class="pc-list">
+          <li><span class="k">Süre</span><span class="v">Görüşmede şekillenir</span></li>
+          <li><span class="k">Format</span><span class="v">Zaman dilimlerinde rotasyon</span></li>
+          <li><span class="k">Ekran</span><span class="v">3 yön</span></li>
+          <li><span class="k">Kullanım</span><span class="v">Küçük ölçek, esnek bütçe</span></li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="products-footer">
+      <span><span class="accent-dot">●</span> Tüm formatlarda 3 ekran yüzü</span>
+      <span><span class="accent-dot">●</span> 6500 cd/m² parlaklık · PH-3 Outdoor</span>
+      <span><span class="accent-dot">●</span> Her formatta GPS log + kapanış raporu dahil</span>
     </div>
   </div>
 </section>
@@ -675,12 +792,12 @@
   <div class="wrap">
     <div class="section-head">
       <div>
-        <div class="eyebrow"><span class="num">/ 02</span><span class="label">Kime Hizmet</span></div>
-        <h2 class="h-title">Üç Ekip İçin<br/>Operasyonel<br/>Altyapı.</h2>
+        <div class="eyebrow"><span class="num">/ 03</span><span class="label">Kime Hizmet</span></div>
+        <h2 class="h-title">Üç Farklı<br/>Masa. Aynı<br/>Araç.</h2>
       </div>
       <p class="lede">
-        Ajans ve etkinlik şirketleriyle uzun süreli çerçeve anlaşmaları yapıyoruz.
-        KOBİ'ler için ise paketli, sabit fiyatlı yayın blokları sunuyoruz.
+        Etkinlik organizatörü, medya ajansı ya da kendi markasını büyüten KOBİ —
+        hangi masadan olursa olsun aynı altyapı, aynı operasyon kalitesi.
       </p>
     </div>
 
@@ -739,17 +856,18 @@
           </svg>
         </div>
         <p class="desc">
-          Konser, lansman ve festival çevresinde rota yayını. Kreatifiniz hazırsa onu
-          yayınlarız; yoksa içerik üretimi hizmetimizle yayına hazır hale getiririz.
+          Konser, lansman, festival, açılış ekipleri. Etkinlik günü venue çevresinde
+          marka mevcudiyeti; lansman saatinde eşzamanlı sokak desteği. Kreatifiniz yoksa
+          içerik tasarımı ayrı hizmet olarak sunulur.
         </p>
         <div class="use-cases">
           <span class="uc-label">Örnek Kullanım</span>
-          <p class="uc-item">Konser tanıtımları</p>
-          <p class="uc-item">Lansman günü canlı duyuru</p>
-          <p class="uc-item">Festival alanı yön bilgilendirme</p>
+          <p class="uc-item">Konser günü venue çevresi marka varlığı</p>
+          <p class="uc-item">Lansman saatinde eşzamanlı sokak duyurusu</p>
+          <p class="uc-item">Festival alanı yön ve tanıtım yayını</p>
         </div>
         <div class="foot">
-          <span class="mono">/ETK-A</span>
+          <span class="mono">/ETK-A · Full Day · Half Day</span>
           <a href="#iletisim">İletişime Geç →</a>
         </div>
       </article>
@@ -787,18 +905,18 @@
           </svg>
         </div>
         <p class="desc">
-          Çerçeve anlaşma ile müşteri kampanyalarınızı birlikte yürütüyoruz. Her kampanya
-          sonunda rota log'u, izlenim tahmini ve foto kanıtla beraber detaylı raporlama
-          maille teslim edilir. Müşteri paneli ilerleyen aşamalarda devreye girecek.
+          Marka adına OOH planlama yapan satın alma ekipleri. Kampanya peak gününde yüksek
+          görünürlük. GPS log ve saat kaydı, müşteri raporuna entegre edilebilir formatta
+          teslim edilir. Çerçeve anlaşma seçeneği mevcut.
         </p>
         <div class="use-cases">
           <span class="uc-label">Örnek Kullanım</span>
-          <p class="uc-item">Marka kampanyası için kreatif rotasyon</p>
-          <p class="uc-item">Aylık dış mekan görünürlük planı</p>
-          <p class="uc-item">Müşteri raporu için yayın özetleri</p>
+          <p class="uc-item">Peak gününde marka görünürlük desteği</p>
+          <p class="uc-item">Müşteri raporuna GPS log entegrasyonu</p>
+          <p class="uc-item">Düzenli ajans için çerçeve anlaşma</p>
         </div>
         <div class="foot">
-          <span class="mono">/AJN-B</span>
+          <span class="mono">/AJN-B · Full Day · Half Day</span>
           <a href="#iletisim">İletişime Geç →</a>
         </div>
       </article>
@@ -806,8 +924,8 @@
       <article class="card">
         <span class="corner-tl"></span><span class="corner-tr"></span>
         <span class="corner-bl"></span><span class="corner-br"></span>
-        <span class="tag"><i></i>03 / SMB</span>
-        <h3>KOBİ'ler<br/>&amp; Markalar</h3>
+        <span class="tag"><i></i>03 / DIRECT</span>
+        <h3>Direkt Markalar<br/>&amp; KOBİ'ler</h3>
         <div class="card-viz">
           <span class="vz-tag">SHR / SMB</span>
           <svg viewBox="0 0 320 140" preserveAspectRatio="none" aria-hidden="true">
@@ -841,17 +959,18 @@
           </svg>
         </div>
         <p class="desc">
-          Paylaşımlı kullanım modeli ile her ölçekten KOBİ'ye ve markaya hizmet veriyoruz —
-          tek bir LED truck'ın esnek gücüyle.
+          Restoran, perakende, gayrimenkul, klinik, eğitim. Şube açılışı, sezonsal
+          kampanya, lokal bilinirlik. Half Day ve Paylaşımlı paket ile her ölçeğe
+          uygun çözüm. Kreatif yoksa içerik tasarımı ayrı hizmet.
         </p>
         <div class="use-cases">
           <span class="uc-label">Örnek Kullanım</span>
-          <p class="uc-item">Mağaza açılış duyurusu</p>
-          <p class="uc-item">Kampanya duyuruları</p>
-          <p class="uc-item">Yerel etkinlik tanıtımı</p>
+          <p class="uc-item">Şube açılışı ve mağaza duyurusu</p>
+          <p class="uc-item">Sezonsal kampanya görünürlüğü</p>
+          <p class="uc-item">Lokal bilinirlik ve etkinlik tanıtımı</p>
         </div>
         <div class="foot">
-          <span class="mono">/KOB-C</span>
+          <span class="mono">/KOB-C · Half Day · Paylaşımlı</span>
           <a href="#iletisim">İletişime Geç →</a>
         </div>
       </article>
@@ -864,11 +983,12 @@
   <div class="wrap">
     <div class="spec-layout">
       <div class="spec-intro">
-        <div class="eyebrow"><span class="num">/ 03</span><span class="label">Donanım</span></div>
+        <div class="eyebrow"><span class="num">/ 04</span><span class="label">Donanım</span></div>
         <h2 class="h-title spec-h2">9.92 Metre<br/><span class="accent">LED</span> Sokakta.</h2>
         <p class="spec-lede">
           PH-3 outdoor LED panel, 3 yönde eş zamanlı yayın için tasarlandı. Gün ışığında
-          okunabilen 6500 cd/m² parlaklık, kreatifinizi sokak ölçeğinde teslim eder.
+          okunabilen 6500 cd/m² parlaklık. Kreatif teslim formatı: 1248×728 px yan ekran,
+          PNG · JPG · MP4 · MOV — yayından 72 saat önce.
         </p>
         <div class="truck-viz">
           <span class="corner-tl"></span><span class="corner-tr"></span>
@@ -928,11 +1048,11 @@
         </div>
         <div class="spec-row">
           <span class="k">Arka Ekran</span>
-          <div class="v"><span class="big">2400</span><span class="x">×</span><span class="big">2240</span><span class="unit">mm</span></div>
+          <div class="v"><span class="big">2240</span><span class="x">×</span><span class="big">2240</span><span class="unit">mm</span></div>
         </div>
         <div class="spec-row">
           <span class="k">Çözünürlük <em class="k-mult">/ Yan</em></span>
-          <div class="v"><span class="big">2480</span><span class="x">×</span><span class="big">560</span><span class="unit">px</span></div>
+          <div class="v"><span class="big">1248</span><span class="x">×</span><span class="big">728</span><span class="unit">px</span></div>
         </div>
         <div class="spec-row">
           <span class="k">Parlaklık</span>
@@ -940,7 +1060,7 @@
         </div>
         <div class="spec-row">
           <span class="k">Operasyon</span>
-          <div class="v"><span class="big">12</span><span class="unit">saat / gün</span><span class="unit"><span class="dot-on"></span>aktif</span></div>
+          <div class="v"><span class="big">16</span><span class="unit">saat / gün</span><span class="unit"><span class="dot-on"></span>aktif</span></div>
         </div>
       </aside>
     </div>
@@ -952,19 +1072,19 @@
   <div class="wrap">
     <div class="cta-stack">
       <div class="cta-eyebrow">
-        <span class="mono" style="color:var(--orange)">/ 04</span>
-        <span class="label">Teklif Al</span>
+        <span class="mono" style="color:var(--orange)">/ 05</span>
+        <span class="label">Brief Al</span>
       </div>
       <h2 class="h-title cta-h2">
-        Bir Sonraki Kampanyanız<br/>
-        <span class="accent">24 Saat</span> İçinde Sokakta.
+        Bir Brief<br/>
+        <span class="accent">Yeter.</span>
       </h2>
       <p class="cta-lede">
-        Brief'inizi paylaşın — rota önerisi, izlenim tahmini ve fiyat teklifi 24 saat
-        içinde mailinizde.
+        Kısa bir e-posta yeterli — uzun form yok. İlk yanıt: rota önerisi, takvim
+        uygunluğu ve teklif — 24 saat içinde mailinizde.
       </p>
       <div class="cta-actions">
-        <a href="mailto:teklif@media270.com?subject=Teklif%20Talebi" class="btn btn-primary lg">Teklif Al <span class="arrow">→</span></a>
+        <a href="mailto:teklif@media270.com?subject=Brief%20Talebi" class="btn btn-primary lg">Brief Gönder <span class="arrow">→</span></a>
         <a href="#iletisim" class="btn btn-ghost-dark">İletişime Geç</a>
       </div>
     </div>
