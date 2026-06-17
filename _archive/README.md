@@ -1,6 +1,3 @@
-cat > _archive/README.md << 'EOF'
-# media270 Archive
-
 Bu klasördeki dosyalar production'da kullanılmıyor.
 
 ## İçerik
@@ -15,4 +12,3 @@ Bu klasördeki dosyalar production'da kullanılmıyor.
 - Orjinal_anasayfa_index.html — asıl ana sayfa
 - tanitim_sayfasi/ — fiyatsız (index, mobil) + fiyatlı (premium, premium-mobil)
 - rota_gezgini/ — canlı rota aracı
-EOF
