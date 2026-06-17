@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Media270 — Canlı Harita</title>
+<link rel="icon" type="image/svg+xml" href="/m270_icon_color.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Rajdhani:wght@600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.9.0/mapbox-gl.css" rel="stylesheet" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.9.0/mapbox-gl.js"></script>
+<style>
+  :root { --ink:#0A0A0A; --paper:#F2F0EC; --accent:#FF5E1A; --line:rgba(10,10,10,0.14); }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; background:var(--paper); overflow:hidden; font-family:'Rajdhani',sans-serif; }
+  #map { position:absolute; inset:0; display:none; }
+  #grid-overlay { position:absolute; inset:0; pointer-events:none; z-index:2; display:none;
+    background-image:linear-gradient(rgba(10,10,10,0.045) 1px,transparent 1px),linear-gradient(90deg,rgba(10,10,10,0.045) 1px,transparent 1px);
+    background-size:64px 64px; }
+  .bracket { position:absolute; width:34px; height:34px; border:2px solid var(--accent); z-index:3; pointer-events:none; }
+  .bracket.tl { top:22px; left:22px; border-right:0; border-bottom:0; }
+  .bracket.tr { top:22px; right:22px; border-left:0; border-bottom:0; }
+  .bracket.bl { bottom:22px; left:22px; border-right:0; border-top:0; }
+  .bracket.br { bottom:22px; right:22px; border-left:0; border-top:0; }
+  #gate { position:absolute; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; padding:24px;
+    background:linear-gradient(rgba(242,240,236,0.92),rgba(242,240,236,0.98)); }
+  .gate-card { width:min(420px,100%); border:1px solid var(--line); border-radius:2px; background:rgba(255,255,255,0.9);
+    padding:28px 24px; backdrop-filter:blur(8px); }
+  .gate-card .eyebrow { font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin:0 0 8px; font-weight:600; }
+  .gate-card h1 { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:36px; line-height:0.95;
+    text-transform:uppercase; margin:0 0 20px; color:var(--ink); }
+  .gate-card label { display:block; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(10,10,10,0.55); margin-bottom:8px; }
+  .gate-card input { width:100%; font-family:'DM Mono',monospace; font-size:18px; letter-spacing:0.12em; text-transform:uppercase;
+    padding:12px 14px; border:1px solid var(--line); border-radius:2px; background:#fff; }
+  .gate-card button { margin-top:16px; width:100%; padding:14px; border:0; border-radius:2px; background:var(--accent); color:#fff;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:14px; letter-spacing:0.14em; text-transform:uppercase; cursor:pointer; }
+  .gate-card button:disabled { opacity:0.6; cursor:not-allowed; }
+  .gate-error { margin-top:12px; font-family:'DM Mono',monospace; font-size:12px; color:#b91c1c; min-height:18px; }
+  #header { position:absolute; top:38px; left:48px; z-index:5; pointer-events:none; display:none; }
+  #header .eyebrow { font-family:'Rajdhani',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin:0 0 4px; }
+  #header h1 { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:34px; line-height:0.92; text-transform:uppercase; color:var(--ink); margin:0; }
+  #status-bar { position:absolute; top:108px; left:48px; z-index:5; display:none; max-width:min(360px,calc(100vw - 96px));
+    padding:10px 14px; border:1px solid var(--line); border-radius:2px; background:rgba(255,255,255,0.88); backdrop-filter:blur(6px); }
+  #status-bar .line { font-family:'DM Mono',monospace; font-size:11px; color:rgba(10,10,10,0.7); line-height:1.5; }
+  #status-bar .line b { color:var(--accent); font-weight:400; }
+  #wordmark { position:absolute; bottom:34px; right:48px; z-index:4; font-family:'DM Mono',monospace; font-size:12px; letter-spacing:0.06em; color:rgba(10,10,10,0.6); display:none; }
+  #wordmark b { color:var(--accent); font-weight:400; }
+  .truck-dot { width:16px; height:16px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 0 4px rgba(255,94,26,0.25),0 0 0 10px rgba(255,94,26,0.12); }
+  #errbar { position:absolute; top:0; left:0; right:0; z-index:20; display:none; padding:14px 20px; background:var(--accent); color:#fff; font-family:'DM Mono',monospace; font-size:13px; }
+  @media (max-width:640px) {
+    .bracket { display:none; }
+    #header { top:16px; left:18px; } #header h1 { font-size:24px; }
+    #status-bar { top:88px; left:18px; max-width:calc(100vw - 36px); }
+    #wordmark { bottom:14px; right:16px; font-size:10px; }
+  }
+</style>
+</head>
+<body>
+  <div id="errbar"></div>
+
+  <div id="gate">
+    <div class="gate-card">
+      <p class="eyebrow">Media270 · Canlı Konum</p>
+      <h1>Haritaya Giriş</h1>
+      <form id="gate-form">
+        <label for="code-input">Erişim kodunuz</label>
+        <input id="code-input" type="text" autocomplete="off" placeholder="7K3F-92AX" maxlength="12" />
+        <div class="gate-error" id="gate-error"></div>
+        <button type="submit" id="gate-submit">Haritayı Aç</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="map"></div>
+  <div id="grid-overlay"></div>
+  <div class="bracket tl"></div><div class="bracket tr"></div><div class="bracket bl"></div><div class="bracket br"></div>
+  <div id="header"><p class="eyebrow">Media270 · Canlı</p><h1>Araç Konumu</h1></div>
+  <div id="status-bar">
+    <div class="line" id="status-updated">Son güncelleme: <b>—</b></div>
+    <div class="line" id="status-speed">Hız: <b>—</b></div>
+    <div class="line" id="status-address">Konum: <b>—</b></div>
+  </div>
+  <div id="wordmark"><b>media270</b>.com</div>
+
+  <script src="config.js"></script>
+  <script>
+(function () {
+  const CFG = window.LIVE_MAP_CONFIG || {};
+  const C = (id) => document.getElementById(id);
+
+  function showErr(msg) {
+    const b = C('errbar');
+    b.textContent = msg;
+    b.style.display = 'block';
+  }
+
+  if (!CFG.supabaseUrl || CFG.supabaseUrl.includes('YOUR_PROJECT')) {
+    showErr('config.js dosyasında supabaseUrl ve supabaseAnonKey ayarlanmalı.');
+    return;
+  }
+  if (!CFG.mapboxToken || !String(CFG.mapboxToken).startsWith('pk.')) {
+    showErr('config.js içinde geçerli bir Mapbox token gerekli.');
+    return;
+  }
+
+  const fnBase = CFG.supabaseUrl.replace(/\/$/, '') + '/functions/v1';
+  const pollMs = CFG.pollIntervalMs || 5000;
+  const headers = () => ({
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + CFG.supabaseAnonKey,
+    'apikey': CFG.supabaseAnonKey,
+  });
+
+  let sessionToken = null;
+  let pollTimer = null;
+  let map = null;
+  let marker = null;
+  let followLngLat = null;
+
+  function normalizeCode(raw) {
+    return raw.trim().toUpperCase().replace(/\s+/g, '');
+  }
+
+  function formatTrTime(iso) {
+    try {
+      return new Date(iso).toLocaleString('tr-TR', {
+        timeZone: 'Europe/Istanbul',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+      });
+    } catch { return '—'; }
+  }
+
+  function showMapUi() {
+    C('gate').style.display = 'none';
+    ['map', 'grid-overlay', 'header', 'status-bar', 'wordmark'].forEach((id) => {
+      C(id).style.display = id === 'map' ? 'block' : (id === 'grid-overlay' ? 'block' : 'block');
+    });
+  }
+
+  function initMap() {
+    mapboxgl.accessToken = CFG.mapboxToken;
+    map = new mapboxgl.Map({
+      container: 'map',
+      style: CFG.mapStyle || 'mapbox://styles/mapbox/light-v11',
+      center: [29.03, 41.05],
+      zoom: 11,
+      pitch: 0,
+      bearing: 0,
+      attributionControl: false,
+    });
+
+    const el = document.createElement('div');
+    el.className = 'truck-dot';
+    marker = new mapboxgl.Marker({ element: el, anchor: 'center' })
+      .setLngLat([29.03, 41.05])
+      .addTo(map);
+
+    map.on('load', () => {
+      map.getStyle().layers.forEach((ly) => {
+        if (ly.type === 'symbol') map.setLayoutProperty(ly.id, 'visibility', 'none');
+      });
+    });
+  }
+
+  function updateMarker(lon, lat) {
+    if (!marker || !map) return;
+    marker.setLngLat([lon, lat]);
+    followLngLat = [lon, lat];
+    const center = map.getCenter();
+    const lerp = CFG.followLerp ?? 0.08;
+    map.setCenter([
+      center.lng + (lon - center.lng) * lerp,
+      center.lat + (lat - center.lat) * lerp,
+    ]);
+    if (map.getZoom() < (CFG.followZoom || 14) - 0.5) {
+      map.setZoom(CFG.followZoom || 14);
+    }
+  }
+
+  function updateStatus(data) {
+    C('status-updated').innerHTML = 'Son güncelleme: <b>' + formatTrTime(data.ts) + '</b>';
+    C('status-speed').innerHTML = 'Hız: <b>' + (data.speed != null ? data.speed + ' km/s' : '—') + '</b>';
+    C('status-address').innerHTML = 'Konum: <b>' + (data.address || (data.lat.toFixed(5) + ', ' + data.lon.toFixed(5))) + '</b>';
+  }
+
+  function stopSession(message) {
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = null;
+    sessionToken = null;
+    C('gate-error').textContent = message || '';
+    C('gate').style.display = 'flex';
+    ['map', 'grid-overlay', 'header', 'status-bar', 'wordmark'].forEach((id) => {
+      C(id).style.display = 'none';
+    });
+    if (message) C('gate-error').textContent = message;
+  }
+
+  async function validateCode(code) {
+    const res = await fetch(fnBase + '/live-map-validate', {
+      method: 'POST',
+      headers: headers(),
+      body: JSON.stringify({ code }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Kod doğrulanamadı');
+    return data;
+  }
+
+  async function fetchPosition() {
+    const res = await fetch(fnBase + '/live-map-position', {
+      method: 'GET',
+      headers: { ...headers(), 'x-live-map-session': sessionToken },
+    });
+    const data = await res.json();
+    if (res.status === 403 || res.status === 401) {
+      stopSession(data.error || 'Oturum sona erdi');
+      throw new Error('session_end');
+    }
+    if (!res.ok) throw new Error(data.error || 'Konum alınamadı');
+    return data;
+  }
+
+  async function pollOnce() {
+    try {
+      const pos = await fetchPosition();
+      updateMarker(pos.lon, pos.lat);
+      updateStatus(pos);
+    } catch (e) {
+      if (e.message === 'session_end') return;
+      console.warn('[poll]', e);
+    }
+  }
+
+  function startPolling() {
+    if (pollTimer) clearInterval(pollTimer);
+    pollOnce();
+    pollTimer = setInterval(pollOnce, pollMs);
+  }
+
+  C('gate-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const code = normalizeCode(C('code-input').value);
+    C('gate-error').textContent = '';
+    C('gate-submit').disabled = true;
+    try {
+      const { sessionToken: token } = await validateCode(code);
+      sessionToken = token;
+      showMapUi();
+      if (!map) initMap();
+      else map.resize();
+      startPolling();
+    } catch (err) {
+      C('gate-error').textContent = err.message || 'Giriş başarısız';
+    } finally {
+      C('gate-submit').disabled = false;
+    }
+  });
+
+  const params = new URLSearchParams(location.search);
+  const prefill = params.get('code');
+  if (prefill) {
+    C('code-input').value = prefill;
+  }
+})();
+  </script>
+</body>
+</html>
