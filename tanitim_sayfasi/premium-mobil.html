@@ -6,7 +6,68 @@
 <title>Media270 — Tanıtım Özeti · Mobile Summary</title>
 <link rel="stylesheet" href="mobile.css" />
 </head>
-<body>
+<body class="locked">
+
+<script>
+  if (localStorage.getItem('m270_tanitim_access') === '1') {
+    document.body.classList.remove('locked');
+  }
+</script>
+
+<div class="gate" id="gate">
+  <div class="gate-box">
+    <span class="br tl"></span><span class="br tr"></span><span class="br bl"></span><span class="br br2"></span>
+    <div class="gate-logo">MEDIA<span class="accent">270</span></div>
+    <div class="gate-label">
+      TANITIM ÖZETİ · ÖZEL ERİŞİM
+      <span lang="en">PRIVATE ACCESS · ENTER YOUR CODE</span>
+    </div>
+    <form id="gate-form" autocomplete="off">
+      <input id="gate-input" type="text" placeholder="ERİŞİM KODU" autocomplete="off" spellcheck="false" autocapitalize="characters" />
+      <button type="submit">GİRİŞ · ENTER</button>
+    </form>
+    <div class="gate-error" id="gate-error" hidden>Kod hatalı, tekrar deneyin · Incorrect code</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var KEY = 'm270_tanitim_access';
+  var HASH = 'a44c384dce713ff5e5724bd1e7210f017db56d5f2aa2c6cfdf6edef251127885';
+
+  function sha256Hex(str) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (b) {
+        return b.toString(16).padStart(2, '0');
+      }).join('');
+    });
+  }
+
+  var form = document.getElementById('gate-form');
+  var input = document.getElementById('gate-input');
+  var error = document.getElementById('gate-error');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!window.crypto || !window.crypto.subtle) {
+      error.textContent = 'Bu sayfa https:// üzerinden açılmalı · Page must be served over https://';
+      error.hidden = false;
+      return;
+    }
+    sha256Hex(input.value.trim().toUpperCase()).then(function (hash) {
+      if (hash === HASH) {
+        localStorage.setItem(KEY, '1');
+        error.hidden = true;
+        document.body.classList.remove('locked');
+      } else {
+        error.hidden = false;
+        input.value = '';
+        input.focus();
+      }
+    });
+  });
+})();
+</script>
 
 <div class="doc">
 
@@ -154,6 +215,61 @@
       </div>
     </section>
 
+    <!-- ============================================================
+         FİYATLANDIRMA
+    ============================================================ -->
+    <section class="m-section" data-mood="editorial">
+      <div class="section-inner">
+        <div class="section-eyebrow">
+          <span class="num">/ 03</span>
+          <span>FİYATLANDIRMA · PRICING</span>
+          <span class="rule"></span>
+        </div>
+
+        <h2 class="h-tr">İki format.<br />Net <span class="accent">fiyat.</span></h2>
+        <div class="h-en">TWO FORMATS. ONE CLEAR PRICE.</div>
+
+        <div class="price-grid">
+          <div class="price-card">
+            <div class="lbl"><span lang="en">Full Day Exclusive</span> · 16 saat</div>
+            <div class="amount">100.000<span class="cur">₺</span></div>
+            <div class="unit">+ KDV / gün</div>
+            <div class="unit-en" lang="en">Full day · VAT excluded</div>
+          </div>
+          <div class="price-card">
+            <div class="lbl"><span lang="en">Half Day Exclusive</span> · 8 saat</div>
+            <div class="amount">75.000<span class="cur">₺</span></div>
+            <div class="unit">+ KDV / yarım gün</div>
+            <div class="unit-en" lang="en">Half day · VAT excluded</div>
+          </div>
+        </div>
+
+        <p class="body">Half Day bloğu AM, PM ya da müşterinin tercih ettiği <strong>8 saatlik dilim</strong> olabilir. Birden fazla gün alındığında günlük fiyat her iki formatta da <strong style="color: var(--orange);">aynı kademeli indirimle</strong> düşer — 7 güne kadar.</p>
+        <p class="en" lang="en">The half-day block can be AM, PM, or your preferred 8-hour window. Booking multiple days steps the daily rate down in both formats — up to 7 days.</p>
+
+        <table class="discount-table">
+          <thead>
+            <tr>
+              <th>GÜN</th>
+              <th>İNDİRİM</th>
+              <th>FULL DAY ₺/GÜN</th>
+              <th>HALF DAY ₺/GÜN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="strong">1</td><td>—</td><td class="strong">100.000</td><td>75.000</td></tr>
+            <tr><td class="strong">2</td><td>%5</td><td class="strong">95.000</td><td>71.250</td></tr>
+            <tr><td class="strong">3</td><td>%10</td><td class="strong">90.000</td><td>67.500</td></tr>
+            <tr><td class="strong">4</td><td>%12</td><td class="strong">88.000</td><td>66.000</td></tr>
+            <tr><td class="strong">5</td><td>%15</td><td class="strong">85.000</td><td>63.750</td></tr>
+            <tr><td class="strong">6</td><td>%18</td><td class="strong">82.000</td><td>61.500</td></tr>
+            <tr><td class="strong">7</td><td class="pk">%20</td><td class="strong">80.000</td><td>60.000</td></tr>
+          </tbody>
+        </table>
+
+        <div class="vat-note">Tüm fiyatlar KDV hariç · <span lang="en">All prices exclude VAT</span></div>
+      </div>
+    </section>
 
     <!-- ============================================================
          NEDEN EXCLUSIVE?
@@ -161,7 +277,7 @@
     <section class="m-section" data-mood="night">
       <div class="section-inner">
         <div class="section-eyebrow">
-          <span class="num">/ 03</span>
+          <span class="num">/ 04</span>
           <span>NEDEN EXCLUSIVE? · WHY EXCLUSIVE</span>
           <span class="rule"></span>
         </div>
@@ -214,7 +330,7 @@
     <section class="m-section" data-mood="editorial">
       <div class="section-inner">
         <div class="section-eyebrow">
-          <span class="num">/ 03</span>
+          <span class="num">/ 05</span>
           <span>KİMLER SATIN ALIR? · WHO BUYS THIS</span>
           <span class="rule"></span>
         </div>
@@ -283,7 +399,7 @@
     <section class="m-section" data-mood="operational">
       <div class="section-inner">
         <div class="section-eyebrow">
-          <span class="num">/ 03</span>
+          <span class="num">/ 07</span>
           <span>DONANIM &amp; GÖRÜNÜRLÜK · HARDWARE</span>
           <span class="rule"></span>
         </div>
@@ -328,7 +444,7 @@
     <section class="m-section" data-mood="operational">
       <div class="section-inner">
         <div class="section-eyebrow">
-          <span class="num">/ 03</span>
+          <span class="num">/ 08</span>
           <span>ROTALAR · ROUTES</span>
           <span class="rule"></span>
         </div>
@@ -354,7 +470,7 @@
     <section class="m-section" data-mood="operational">
       <div class="section-inner">
         <div class="section-eyebrow">
-          <span class="num">/ 03</span>
+          <span class="num">/ 06</span>
           <span>GÜN NASIL KURGULANIR · PROCESS</span>
           <span class="rule"></span>
         </div>
@@ -429,7 +545,7 @@
     <section class="m-section" data-mood="operational">
       <div class="section-inner">
         <div class="section-eyebrow">
-          <span class="num">/ 09</span>
+          <span class="num">/ 10</span>
           <span>SIK SORULANLAR · FAQ</span>
           <span class="rule"></span>
         </div>
