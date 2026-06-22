@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<title>Media270 — Yakında</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="icon" type="image/svg+xml" href="m270_icon_color.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&family=Rajdhani:wght@600&family=DM+Mono:wght@400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --ink: #0A0A0A;
+    --orange: #FF5E1A;
+    --line: rgba(10,10,10,0.1);
+    --line-strong: rgba(10,10,10,0.18);
+    --muted: rgba(10,10,10,0.6);
+    --grid: rgba(10,10,10,0.045);
+    --grid-size: 64px;
+    --f-title: "Barlow Condensed", sans-serif;
+    --f-label: "Rajdhani", sans-serif;
+    --f-mono: "DM Mono", monospace;
+    --f-body: "JetBrains Mono", "DM Mono", monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: var(--f-body);
+    -webkit-font-smoothing: antialiased;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / var(--grid-size) var(--grid-size),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / var(--grid-size) var(--grid-size),
+      var(--bg);
+    color: var(--ink);
+  }
+
+  /* --- Corner brackets --- */
+  .corner {
+    position: fixed;
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--ink);
+    z-index: 10;
+  }
+  .c-tl { top: 28px; left: 28px; border-right: none; border-bottom: none; }
+  .c-tr { top: 28px; right: 28px; border-left: none; border-bottom: none; }
+  /* Alt köşeler meta bar'ın üstünde (50px + 16px boşluk) */
+  .c-bl { bottom: 66px; left: 28px; border-right: none; border-top: none; }
+  .c-br { bottom: 66px; right: 28px; border-left: none; border-top: none; }
+
+  /* --- Full-screen layout --- */
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 40px 80px;
+    text-align: center;
+  }
+
+  /* --- Logo --- */
+  .logo-wrap { margin-bottom: 56px; }
+  .logo-wrap img { height: 52px; display: block; margin: 0 auto; }
+
+  /* --- Eyebrow badge --- */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    background: #fff;
+    margin-bottom: 44px;
+  }
+  .eyebrow .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--orange);
+    border-radius: 50%;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  .eyebrow .tag {
+    font-family: var(--f-label);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 12px;
+  }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+  /* --- Main title --- */
+  .headline {
+    font-family: var(--f-title);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.9;
+    letter-spacing: -0.005em;
+    font-size: clamp(72px, 12vw, 148px);
+  }
+  .headline .accent { color: var(--orange); }
+
+  /* --- Sub text --- */
+  .sub {
+    margin-top: 36px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 480px;
+  }
+
+  /* --- Vertical rule --- */
+  .rule {
+    width: 1px;
+    height: 56px;
+    background: var(--line-strong);
+    margin: 52px auto;
+  }
+
+  /* --- Contact row --- */
+  .contact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+  }
+  .contact .k {
+    font-family: var(--f-label);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .contact .sep {
+    width: 1px;
+    height: 14px;
+    background: var(--line-strong);
+    display: inline-block;
+  }
+  .contact a {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--orange);
+    padding-bottom: 2px;
+    transition: color 0.15s ease;
+  }
+  .contact a:hover { color: var(--orange); }
+
+  /* --- Bottom meta bar --- */
+  .meta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 44px;
+    border-top: 1px solid var(--line);
+    background: color-mix(in oklab, var(--bg) 92%, transparent);
+    backdrop-filter: saturate(140%) blur(8px);
+    z-index: 5;
+  }
+  .meta .left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .mono {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  .meta .sep {
+    width: 1px;
+    height: 12px;
+    background: var(--line-strong);
+    display: inline-block;
+  }
+
+  /* --- Fade-up animations --- */
+  .fu {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.9s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .d1 { animation-delay: 0.05s; }
+  .d2 { animation-delay: 0.18s; }
+  .d3 { animation-delay: 0.32s; }
+  .d4 { animation-delay: 0.48s; }
+  .d5 { animation-delay: 0.60s; }
+
+  @keyframes fadeUp { to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<span class="corner c-tl"></span>
+<span class="corner c-tr"></span>
+<span class="corner c-bl"></span>
+<span class="corner c-br"></span>
+
+<div class="page">
+
+  <div class="logo-wrap fu d1">
+    <img src="m270_lockup_color.svg" alt="Media270"/>
+  </div>
+
+  <div class="eyebrow fu d2">
+    <span class="dot"></span>
+    <span class="tag">İstanbul · Mobil LED Reklam</span>
+  </div>
+
+  <h1 class="headline fu d3">
+    Çok Yakında<br/><span class="accent">Geliyor.</span>
+  </h1>
+
+  <p class="sub fu d4">
+    Markanızı şehrin tam göbeğine taşıyoruz.<br/>
+    Hazırlıklar sürüyor — bilgi almak için iletişime geçin.
+  </p>
+
+  <div class="rule fu d5"></div>
+
+  <div class="contact fu d5">
+    <span class="k">İletişim</span>
+    <span class="sep"></span>
+    <a href="mailto:teklif@media270.com">teklif@media270.com</a>
+  </div>
+
+</div>
+
+<div class="meta">
+  <div class="left">
+    <span class="mono">MEDIA270 · İSTANBUL</span>
+    <span class="sep"></span>
+    <span class="mono">PH-3 · OUTDOOR LED</span>
+    <span class="sep"></span>
+    <span class="mono">IST-001</span>
+  </div>
+  <span class="mono">© 2026</span>
+</div>
+
+</body>
+</html>
