@@ -508,6 +508,7 @@ p.en {
 .contact-band .val { margin-top: 0.25rem; font-family: var(--f-mono); font-size: 1rem; }
 .contact-band .val.email { color: var(--orange); }
 .contact-band .social { margin-top: 0.3rem; font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.1em; color: var(--muted); display: flex; gap: 0.4rem; }
+.contact-band .social a { color: var(--orange); text-decoration: none; }
 
 /* ============================================================
    FOOTER

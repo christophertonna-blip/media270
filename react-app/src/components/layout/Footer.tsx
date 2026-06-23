@@ -3,7 +3,6 @@ import logoUrl from '@/assets/svgs/m270_lockup_color.svg'
 const socials = [
   { label: 'Instagram', href: 'https://www.instagram.com/media_270/' },
   { label: 'LinkedIn',  href: 'https://linkedin.com/company/media270' },
-  { label: 'YouTube',   href: 'https://youtube.com/@media270' },
 ]
 
 export function Footer() {

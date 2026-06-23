@@ -501,7 +501,6 @@ function StoryPage() {
           {[
             { label: 'Instagram', href: 'https://www.instagram.com/media_270/' },
             { label: 'LinkedIn', href: 'https://linkedin.com/company/media270' },
-            { label: 'YouTube', href: 'https://youtube.com/@media270' },
           ].map((s) => (
             <li key={s.label}>
               <a
