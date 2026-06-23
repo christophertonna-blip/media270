@@ -498,10 +498,16 @@ function StoryPage() {
       }}>
         <img src={logoUrl} alt="Media270" style={{ height: 20, filter: 'brightness(0) invert(1)' }} />
         <ul style={{ display: 'flex', gap: 24, listStyle: 'none', margin: 0 }}>
-          {['Instagram', 'LinkedIn', 'YouTube'].map((s) => (
-            <li key={s}>
+          {[
+            { label: 'Instagram', href: 'https://www.instagram.com/media_270/' },
+            { label: 'LinkedIn', href: 'https://linkedin.com/company/media270' },
+            { label: 'YouTube', href: 'https://youtube.com/@media270' },
+          ].map((s) => (
+            <li key={s.label}>
               <a
-                href="#"
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
                   fontFamily: 'var(--font-label)',
                   fontWeight: 600,
@@ -515,7 +521,7 @@ function StoryPage() {
                 onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                 onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}
               >
-                {s}
+                {s.label}
               </a>
             </li>
           ))}
