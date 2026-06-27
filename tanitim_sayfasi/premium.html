@@ -317,6 +317,17 @@
     width: 100%; height: 100%;
     border: 0; display: block;
   }
+  .route-embed-shot {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; display: none;
+  }
+  /* iframes don't render live content in print/PDF — swap in the
+     pre-captured screenshot of the map's first frame instead. */
+  @media print {
+    .route-embed-frame { display: none !important; }
+    .route-embed-shot { display: block !important; }
+  }
   .route-embed-cap {
     margin-top: 2.5mm;
     display: flex; align-items: center; justify-content: space-between;
@@ -1526,6 +1537,7 @@
     <div class="route-embed brackets">
       <span class="br tl"></span><span class="br tr"></span><span class="br bl"></span><span class="br br2"></span>
       <iframe class="route-embed-frame" src="https://media270.com/rota_gezgini/index.html" title="Media270 — Rota Gezgini" loading="lazy"></iframe>
+      <img class="route-embed-shot" alt="Media270 — Rota Gezgini" />
     </div>
     <div class="route-embed-cap">
       <span>GÜZERGÂH AĞI · İNTERAKTİF HARİTA</span>

@@ -51,6 +51,23 @@ function startServer() {
   });
 }
 
+// The route map is a live external iframe (media270.com/rota_gezgini) — it
+// doesn't render inside a PDF print context, so capture a screenshot of its
+// first frame separately and swap it in for the .route-embed-shot fallback.
+const ROUTE_MAP_URL = 'https://media270.com/rota_gezgini/index.html';
+
+async function captureRouteMapShot(browser) {
+  const page = await browser.newPage();
+  try {
+    await page.setViewport({ width: 1200, height: 720 });
+    await page.goto(ROUTE_MAP_URL, { waitUntil: 'networkidle0', timeout: 30000 });
+    const buffer = await page.screenshot({ type: 'png' });
+    return `data:image/png;base64,${buffer.toString('base64')}`;
+  } finally {
+    await page.close();
+  }
+}
+
 // <image-slot> renders into an open shadow root, so images live in
 // slot.shadowRoot, not the main document — wait for those explicitly.
 async function waitForImageSlots(page) {
@@ -88,6 +105,13 @@ async function main() {
 
     await page.evaluate(() => document.fonts.ready);
     await waitForImageSlots(page);
+
+    const routeMapShot = await captureRouteMapShot(browser);
+    await page.evaluate((dataUrl) => {
+      document.querySelectorAll('.route-embed-shot').forEach((img) => {
+        img.src = dataUrl;
+      });
+    }, routeMapShot);
 
     const outPath = path.join(ROOT, 'Media270-Tanitim-Dosyasi.pdf');
     await page.pdf({
