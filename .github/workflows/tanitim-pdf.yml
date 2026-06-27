@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths:
       - 'tanitim_sayfasi/index.html'
+      - 'tanitim_sayfasi/premium.html'
       - 'tanitim_sayfasi/styles.css'
       - 'tanitim_sayfasi/fonts/**'
       - 'tanitim_sayfasi/image-slot.js'
       - 'tanitim_sayfasi/.image-slots.state.json'
+      - 'tanitim_sayfasi/assets/route-map-screenshot.png'
   workflow_dispatch: {}
 
 permissions:
@@ -29,14 +31,14 @@ jobs:
 
       - run: npm run generate:pdf
 
-      - name: Commit regenerated PDF if changed
+      - name: Commit regenerated PDFs if changed
         run: |
-          if git diff --quiet -- tanitim_sayfasi/Media270-Tanitim-Dosyasi.pdf; then
-            echo "PDF unchanged, nothing to commit."
+          if git diff --quiet -- tanitim_sayfasi/Media270-Tanitim-Dosyasi.pdf tanitim_sayfasi/Media270-Premium-Dosyasi.pdf; then
+            echo "PDFs unchanged, nothing to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add tanitim_sayfasi/Media270-Tanitim-Dosyasi.pdf
-          git commit -m "chore: regenerate tanıtım PDF [skip ci]"
+          git add tanitim_sayfasi/Media270-Tanitim-Dosyasi.pdf tanitim_sayfasi/Media270-Premium-Dosyasi.pdf
+          git commit -m "chore: regenerate tanıtım PDFs [skip ci]"
           git push
