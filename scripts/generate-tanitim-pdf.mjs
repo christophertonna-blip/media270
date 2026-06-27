@@ -89,15 +89,15 @@ async function waitForImageSlots(page) {
   });
 }
 
-async function main() {
-  const server = await startServer();
-  const { port } = server.address();
-  const url = `http://127.0.0.1:${port}/index.html`;
+const TARGETS = [
+  { source: 'index.html', outFile: 'Media270-Tanitim-Dosyasi.pdf' },
+  { source: 'premium.html', outFile: 'Media270-Premium-Dosyasi.pdf' },
+];
 
-  const browser = await puppeteer.launch();
+async function renderTarget(browser, port, routeMapShot, { source, outFile }) {
+  const page = await browser.newPage();
   try {
-    const page = await browser.newPage();
-    await page.goto(url, { waitUntil: 'networkidle0' });
+    await page.goto(`http://127.0.0.1:${port}/${source}`, { waitUntil: 'networkidle0' });
 
     // Bypass the access gate for rendering only — the live gate (HASH check,
     // localStorage) is untouched, this just unhides .doc for this CI render.
@@ -106,14 +106,13 @@ async function main() {
     await page.evaluate(() => document.fonts.ready);
     await waitForImageSlots(page);
 
-    const routeMapShot = await captureRouteMapShot(browser);
     await page.evaluate((dataUrl) => {
       document.querySelectorAll('.route-embed-shot').forEach((img) => {
         img.src = dataUrl;
       });
     }, routeMapShot);
 
-    const outPath = path.join(ROOT, 'Media270-Tanitim-Dosyasi.pdf');
+    const outPath = path.join(ROOT, outFile);
     await page.pdf({
       path: outPath,
       printBackground: true,
@@ -121,6 +120,21 @@ async function main() {
     });
 
     console.log(`PDF written to ${outPath}`);
+  } finally {
+    await page.close();
+  }
+}
+
+async function main() {
+  const server = await startServer();
+  const { port } = server.address();
+
+  const browser = await puppeteer.launch();
+  try {
+    const routeMapShot = await captureRouteMapShot(browser);
+    for (const target of TARGETS) {
+      await renderTarget(browser, port, routeMapShot, target);
+    }
   } finally {
     await browser.close();
     server.close();
