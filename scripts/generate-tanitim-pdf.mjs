@@ -52,20 +52,14 @@ function startServer() {
 }
 
 // The route map is a live external iframe (media270.com/rota_gezgini) — it
-// doesn't render inside a PDF print context, so capture a screenshot of its
-// first frame separately and swap it in for the .route-embed-shot fallback.
-const ROUTE_MAP_URL = 'https://media270.com/rota_gezgini/index.html';
+// doesn't render inside a PDF print context, so a manually captured
+// screenshot (full view, including the left-hand route list) is used
+// instead of the iframe for the .route-embed-shot fallback.
+const ROUTE_MAP_SHOT_PATH = path.join(ROOT, 'assets', 'route-map-screenshot.png');
 
-async function captureRouteMapShot(browser) {
-  const page = await browser.newPage();
-  try {
-    await page.setViewport({ width: 1200, height: 720 });
-    await page.goto(ROUTE_MAP_URL, { waitUntil: 'networkidle0', timeout: 30000 });
-    const buffer = await page.screenshot({ type: 'png' });
-    return `data:image/png;base64,${buffer.toString('base64')}`;
-  } finally {
-    await page.close();
-  }
+function loadRouteMapShot() {
+  const buffer = fs.readFileSync(ROUTE_MAP_SHOT_PATH);
+  return `data:image/png;base64,${buffer.toString('base64')}`;
 }
 
 // <image-slot> renders into an open shadow root, so images live in
@@ -131,7 +125,7 @@ async function main() {
 
   const browser = await puppeteer.launch();
   try {
-    const routeMapShot = await captureRouteMapShot(browser);
+    const routeMapShot = loadRouteMapShot();
     for (const target of TARGETS) {
       await renderTarget(browser, port, routeMapShot, target);
     }
