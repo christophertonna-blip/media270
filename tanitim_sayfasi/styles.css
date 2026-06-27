@@ -218,6 +218,38 @@ a { color: inherit; text-decoration: none; }
 .brackets > .bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
 .brackets > .br2 { bottom: -1px; right: -1px; border-left: none; border-top: none; }
 
+/* ----- ARAÇ — vehicle showcase ----- */
+.veh-hero {
+  margin-top: 7mm;
+  position: relative;
+  border: 1px solid var(--line-strong);
+}
+.veh-hero image-slot { width: 100%; height: 116mm; display: block; }
+.veh-cap {
+  margin-top: 2.5mm;
+  display: flex; justify-content: space-between;
+  font-family: var(--f-mono); font-size: 7.5pt;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+}
+.veh-cap .accent { color: var(--orange); }
+
+.veh-duo {
+  margin-top: 5mm;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 5mm;
+}
+.veh-duo figure { display: flex; flex-direction: column; margin: 0; }
+.veh-duo image-slot {
+  width: 100%; height: 62mm; display: block;
+  border: 1px solid var(--line-strong);
+}
+.veh-duo figcaption {
+  margin-top: 2.5mm;
+  display: flex; justify-content: space-between;
+  font-family: var(--f-mono); font-size: 7pt;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+}
+.veh-duo figcaption .accent { color: var(--orange); }
+
 /* ----- PANEL ----- */
 .panel {
   border: 1px solid var(--line-strong);
