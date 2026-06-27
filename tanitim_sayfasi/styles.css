@@ -224,7 +224,8 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   border: 1px solid var(--line-strong);
 }
-.veh-hero image-slot { width: 100%; height: 116mm; display: block; }
+.veh-hero img,
+.veh-hero image-slot { width: 100%; height: 116mm; object-fit: cover; display: block; }
 .veh-cap {
   margin-top: 2.5mm;
   display: flex; justify-content: space-between;
@@ -238,8 +239,9 @@ a { color: inherit; text-decoration: none; }
   display: grid; grid-template-columns: 1fr 1fr; gap: 5mm;
 }
 .veh-duo figure { display: flex; flex-direction: column; margin: 0; }
+.veh-duo img,
 .veh-duo image-slot {
-  width: 100%; height: 62mm; display: block;
+  width: 100%; height: 62mm; object-fit: cover; display: block;
   border: 1px solid var(--line-strong);
 }
 .veh-duo figcaption {
