@@ -46,8 +46,9 @@
   #status-bar .line b { color:var(--accent); font-weight:400; }
   #wordmark { position:absolute; bottom:34px; right:48px; z-index:4; font-family:'DM Mono',monospace; font-size:12px; letter-spacing:0.06em; color:rgba(10,10,10,0.6); display:none; }
   #wordmark b { color:var(--accent); font-weight:400; }
-  .truck-dot { width:16px; height:16px; border-radius:50%; background:var(--accent);
-    box-shadow:0 0 0 4px rgba(255,94,26,0.25),0 0 0 10px rgba(255,94,26,0.12); }
+  .truck-mark { width:52px; height:58px; display:flex; align-items:center; justify-content:center;
+    background:#fff; border:1px solid var(--line); border-radius:4px; }
+  .truck-mark img { width:40px; height:46px; display:block; }
   #errbar { position:absolute; top:0; left:0; right:0; z-index:20; display:none; padding:14px 20px; background:var(--accent); color:#fff; font-family:'DM Mono',monospace; font-size:13px; }
   @media (max-width:640px) {
     .bracket { display:none; }
@@ -78,7 +79,8 @@
   <div class="bracket tl"></div><div class="bracket tr"></div><div class="bracket bl"></div><div class="bracket br"></div>
   <div id="header"><p class="eyebrow">Media270 · Canlı</p><h1>Araç Konumu</h1></div>
   <div id="status-bar">
-    <div class="line" id="status-updated">Son güncelleme: <b>—</b></div>
+    <div class="line" id="status-clock">Şimdi: <b>—</b></div>
+    <div class="line" id="status-updated">Son GPS: <b>—</b></div>
     <div class="line" id="status-speed">Hız: <b>—</b></div>
     <div class="line" id="status-address">Konum: <b>—</b></div>
   </div>
@@ -115,21 +117,48 @@
 
   let sessionToken = null;
   let pollTimer = null;
+  let clockTimer = null;
   let map = null;
   let marker = null;
-  let followLngLat = null;
+  let lastFix = null;
+  let lastGpsAt = null;
+  let lastIgnition = null;
+  let hasFramed = false;
+  let userHasMoved = false;
 
   function normalizeCode(raw) {
     return raw.trim().toUpperCase().replace(/\s+/g, '');
   }
 
-  function formatTrTime(iso) {
+  function formatTrTime(date) {
     try {
-      return new Date(iso).toLocaleString('tr-TR', {
+      return date.toLocaleString('tr-TR', {
         timeZone: 'Europe/Istanbul',
         hour: '2-digit', minute: '2-digit', second: '2-digit',
       });
     } catch { return '—'; }
+  }
+
+  function formatAgo(iso) {
+    const ms = Date.now() - new Date(iso).getTime();
+    if (!Number.isFinite(ms) || ms < 0) return 'az önce';
+    const sec = Math.round(ms / 1000);
+    if (sec < 20) return 'az önce';
+    if (sec < 60) return sec + ' sn önce';
+    const min = Math.round(sec / 60);
+    if (min < 60) return min + ' dk önce';
+    const hr = Math.round(min / 60);
+    return hr + ' sa önce';
+  }
+
+  function metersBetween(a, b) {
+    if (!a) return Infinity;
+    const toRad = (d) => d * Math.PI / 180;
+    const dLat = toRad(b.lat - a.lat);
+    const dLon = toRad(b.lon - a.lon);
+    const x = Math.sin(dLat / 2) ** 2
+      + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLon / 2) ** 2;
+    return 2 * 6371000 * Math.asin(Math.sqrt(x));
   }
 
   function showMapUi() {
@@ -148,47 +177,89 @@
       zoom: 11,
       pitch: 0,
       bearing: 0,
+      dragRotate: false,
+      pitchWithRotate: false,
       attributionControl: false,
     });
 
     const el = document.createElement('div');
-    el.className = 'truck-dot';
+    el.className = 'truck-mark';
+    const img = document.createElement('img');
+    img.src = '/m270_icon_color.svg';
+    img.alt = 'Media270';
+    el.appendChild(img);
     marker = new mapboxgl.Marker({ element: el, anchor: 'center' })
       .setLngLat([29.03, 41.05])
       .addTo(map);
 
+    map.on('dragstart', () => { userHasMoved = true; });
+    map.on('zoomstart', (e) => {
+      if (e.originalEvent) userHasMoved = true;
+    });
+
     map.on('load', () => {
       map.getStyle().layers.forEach((ly) => {
-        if (ly.type === 'symbol') map.setLayoutProperty(ly.id, 'visibility', 'none');
+        if (ly.type !== 'symbol') return;
+        const keep = /settlement|place-|state-label/.test(ly.id);
+        map.setLayoutProperty(ly.id, 'visibility', keep ? 'visible' : 'none');
       });
     });
+  }
+
+  function frameVehicle(lon, lat, animate) {
+    const view = { center: [lon, lat], zoom: CFG.followZoom || 13, bearing: 0, pitch: 0 };
+    if (!map.loaded()) {
+      map.once('load', () => map.jumpTo(view));
+      return;
+    }
+    if (animate) map.easeTo({ ...view, duration: 800, essential: true });
+    else map.jumpTo(view);
   }
 
   function updateMarker(lon, lat) {
     if (!marker || !map) return;
     marker.setLngLat([lon, lat]);
-    followLngLat = [lon, lat];
-    const center = map.getCenter();
-    const lerp = CFG.followLerp ?? 0.08;
-    map.setCenter([
-      center.lng + (lon - center.lng) * lerp,
-      center.lat + (lat - center.lat) * lerp,
-    ]);
-    if (map.getZoom() < (CFG.followZoom || 14) - 0.5) {
-      map.setZoom(CFG.followZoom || 14);
+    const next = { lon, lat };
+    const dist = metersBetween(lastFix, next);
+    lastFix = next;
+
+    if (!hasFramed) {
+      hasFramed = true;
+      frameVehicle(lon, lat, true);
+      return;
+    }
+    if (!userHasMoved && dist > 25) {
+      frameVehicle(lon, lat, true);
     }
   }
 
+  function paintStatus() {
+    C('status-clock').innerHTML = 'Şimdi: <b>' + formatTrTime(new Date()) + '</b>';
+    if (!lastGpsAt) return;
+    const gpsClock = formatTrTime(new Date(lastGpsAt));
+    const parked = lastIgnition === 'OFF' ? ' · duruyor' : '';
+    C('status-updated').innerHTML = 'Son GPS: <b>' + gpsClock + ' · ' + formatAgo(lastGpsAt) + parked + '</b>';
+  }
+
   function updateStatus(data) {
-    C('status-updated').innerHTML = 'Son güncelleme: <b>' + formatTrTime(data.ts) + '</b>';
+    lastGpsAt = data.ts;
+    lastIgnition = data.ignition || null;
+    paintStatus();
     C('status-speed').innerHTML = 'Hız: <b>' + (data.speed != null ? data.speed + ' km/s' : '—') + '</b>';
     C('status-address').innerHTML = 'Konum: <b>' + (data.address || (data.lat.toFixed(5) + ', ' + data.lon.toFixed(5))) + '</b>';
   }
 
   function stopSession(message) {
     if (pollTimer) clearInterval(pollTimer);
+    if (clockTimer) clearInterval(clockTimer);
     pollTimer = null;
+    clockTimer = null;
     sessionToken = null;
+    lastFix = null;
+    lastGpsAt = null;
+    lastIgnition = null;
+    hasFramed = false;
+    userHasMoved = false;
     C('gate-error').textContent = message || '';
     C('gate').style.display = 'flex';
     ['map', 'grid-overlay', 'header', 'status-bar', 'wordmark'].forEach((id) => {
@@ -235,8 +306,11 @@
 
   function startPolling() {
     if (pollTimer) clearInterval(pollTimer);
+    if (clockTimer) clearInterval(clockTimer);
     pollOnce();
     pollTimer = setInterval(pollOnce, pollMs);
+    paintStatus();
+    clockTimer = setInterval(paintStatus, 1000);
   }
 
   C('gate-form').addEventListener('submit', async (e) => {

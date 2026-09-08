@@ -5,6 +5,5 @@ window.LIVE_MAP_CONFIG = {
   pollIntervalMs: 5000,
   mapboxToken: 'pk.eyJ1IjoiY2hyaXN0b3BoZXJ0b25uYTg0IiwiYSI6ImNtcTlheHV4MDAxM2Uyc3F0dmNrNDlndDYifQ.nNbHg-qTxDoJKVv5WCvUKA',
   mapStyle: 'mapbox://styles/mapbox/light-v11',
-  followZoom: 14,
-  followLerp: 0.08,
+  followZoom: 13,
 }
