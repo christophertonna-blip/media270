@@ -47,9 +47,8 @@
   #status-bar .line b { color:var(--accent); font-weight:400; }
   #wordmark { position:absolute; bottom:34px; right:48px; z-index:4; font-family:'DM Mono',monospace; font-size:12px; letter-spacing:0.06em; color:rgba(10,10,10,0.6); display:none; }
   #wordmark b { color:var(--accent); font-weight:400; }
-  .truck-mark { width:52px; height:58px; display:flex; align-items:center; justify-content:center;
-    background:#fff; border:1px solid var(--line); border-radius:4px; }
-  .truck-mark img { width:40px; height:46px; display:block; }
+  .truck-mark { width:48px; height:55px; background:transparent; border:0; }
+  .truck-mark img { width:48px; height:55px; display:block; }
   #errbar { position:absolute; top:0; left:0; right:0; z-index:20; display:none; padding:14px 20px; background:var(--accent); color:#fff; font-family:'DM Mono',monospace; font-size:13px; }
   @media (max-width:640px) {
     .bracket { display:none; }
@@ -81,7 +80,6 @@
   <div id="header"><p class="eyebrow">Media270 · Canlı</p><h1>Araç Konumu</h1></div>
   <div id="status-bar">
     <div class="line" id="status-clock">Şimdi: <b>—</b></div>
-    <div class="line" id="status-updated">Son GPS: <b>—</b></div>
     <div class="line" id="status-speed">Hız: <b>—</b></div>
     <div class="line" id="status-address">Konum: <b>—</b></div>
   </div>
@@ -122,8 +120,6 @@
   let map = null;
   let marker = null;
   let lastFix = null;
-  let lastGpsAt = null;
-  let lastIgnition = null;
   let hasFramed = false;
   let userHasMoved = false;
 
@@ -138,18 +134,6 @@
         hour: '2-digit', minute: '2-digit', second: '2-digit',
       });
     } catch { return '—'; }
-  }
-
-  function formatAgo(iso) {
-    const ms = Date.now() - new Date(iso).getTime();
-    if (!Number.isFinite(ms) || ms < 0) return 'az önce';
-    const sec = Math.round(ms / 1000);
-    if (sec < 20) return 'az önce';
-    if (sec < 60) return sec + ' sn önce';
-    const min = Math.round(sec / 60);
-    if (min < 60) return min + ' dk önce';
-    const hr = Math.round(min / 60);
-    return hr + ' sa önce';
   }
 
   function metersBetween(a, b) {
@@ -243,15 +227,9 @@
 
   function paintStatus() {
     C('status-clock').innerHTML = 'Şimdi: <b>' + formatTrTime(new Date()) + '</b>';
-    if (!lastGpsAt) return;
-    const gpsClock = formatTrTime(new Date(lastGpsAt));
-    const parked = lastIgnition === 'OFF' ? ' · duruyor' : '';
-    C('status-updated').innerHTML = 'Son GPS: <b>' + gpsClock + ' · ' + formatAgo(lastGpsAt) + parked + '</b>';
   }
 
   function updateStatus(data) {
-    lastGpsAt = data.ts;
-    lastIgnition = data.ignition || null;
     paintStatus();
     C('status-speed').innerHTML = 'Hız: <b>' + (data.speed != null ? data.speed + ' km/s' : '—') + '</b>';
     C('status-address').innerHTML = 'Konum: <b>' + (data.address || (data.lat.toFixed(5) + ', ' + data.lon.toFixed(5))) + '</b>';
@@ -264,8 +242,6 @@
     clockTimer = null;
     sessionToken = null;
     lastFix = null;
-    lastGpsAt = null;
-    lastIgnition = null;
     hasFramed = false;
     userHasMoved = false;
     C('gate-error').textContent = message || '';
