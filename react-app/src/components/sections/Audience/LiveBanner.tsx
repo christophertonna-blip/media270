@@ -6,7 +6,8 @@ interface LiveBannerProps {
 
 export function LiveBanner({ currentLocation = 'LEVENT · BÜYÜKDERE CAD.' }: LiveBannerProps) {
   return (
-    <div
+    <a
+      href="/canli-harita/"
       style={{
         marginBottom: 40,
         display: 'grid',
@@ -17,6 +18,9 @@ export function LiveBanner({ currentLocation = 'LEVENT · BÜYÜKDERE CAD.' }: L
         border: '1px solid var(--color-ink)',
         backgroundColor: 'var(--color-bg)',
         position: 'relative',
+        color: 'inherit',
+        textDecoration: 'none',
+        cursor: 'pointer',
       }}
     >
       {/* Mini map */}
@@ -118,6 +122,6 @@ export function LiveBanner({ currentLocation = 'LEVENT · BÜYÜKDERE CAD.' }: L
       >
         Haritayı Aç <span style={{ color: 'var(--color-orange)' }}>→</span>
       </span>
-    </div>
+    </a>
   )
 }

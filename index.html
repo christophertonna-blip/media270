@@ -376,8 +376,11 @@
     background:var(--bg);
     position:relative;
     color:var(--ink);
-    cursor:default;
+    cursor:pointer;
+    transition:background .15s ease;
   }
+  .live-banner:hover{background:var(--cream);}
+  .live-banner:hover .lb-arrow{transform:translateX(4px);}
   .live-banner .lb-mini{width:72px;height:48px;border:1px solid currentColor;position:relative;flex-shrink:0;color:currentColor;}
   .live-banner .lb-mini svg{position:absolute;inset:0;width:100%;height:100%;}
   .live-banner .lb-mini .lb-pin{position:absolute;width:8px;height:8px;background:var(--orange);border-radius:50%;box-shadow:0 0 0 4px color-mix(in oklab, var(--orange) 30%, transparent);left:44px;top:18px;animation:pulse 1.8s ease-in-out infinite;}
@@ -544,7 +547,7 @@
     <div class="nav-links">
       <a href="#nasil">Nasıl Çalışır</a>
       <a href="#kime">Kime Hizmet</a>
-      <span style="opacity:0.35;cursor:default;font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:0.16em;font-size:12px;"><span class="live-dot" aria-hidden="true"></span>Canlı Harita</span>
+      <a href="/canli-harita/"><span class="live-dot" aria-hidden="true"></span>Canlı Harita</a>
       <a href="#iletisim">İletişim</a>
     </div>
     <div class="nav-cta">
@@ -801,7 +804,7 @@
       </p>
     </div>
 
-    <div class="live-banner">
+    <a class="live-banner" href="/canli-harita/">
       <div class="lb-mini" aria-hidden="true">
         <svg viewBox="0 0 72 48" preserveAspectRatio="none">
           <g stroke="currentColor" stroke-width="0.5" opacity="0.35">
@@ -826,7 +829,7 @@
         <span class="now">LEVENT · BÜYÜKDERE CAD.</span>
       </div>
       <span class="lb-arrow">Haritayı Aç <span>→</span></span>
-    </div>
+    </a>
 
     <div class="cards">
       <article class="card">

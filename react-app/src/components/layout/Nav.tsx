@@ -7,7 +7,7 @@ const links = [
   { label: 'Kime Hizmet',   href: '#kime' },
   {
     label: 'Canlı Harita',
-    href:  '#kime',
+    href:  '/canli-harita/',
     live:  true,
   },
   { label: 'İletişim',      href: '#iletisim' },
