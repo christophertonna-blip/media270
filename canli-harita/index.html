@@ -47,8 +47,10 @@
   #status-bar .line b { color:var(--accent); font-weight:400; }
   #wordmark { position:absolute; bottom:34px; right:48px; z-index:4; font-family:'DM Mono',monospace; font-size:12px; letter-spacing:0.06em; color:rgba(10,10,10,0.6); display:none; }
   #wordmark b { color:var(--accent); font-weight:400; }
-  .truck-mark { width:48px; height:55px; background:transparent; border:0; }
-  .truck-mark img { width:48px; height:55px; display:block; }
+  .mapboxgl-marker { background:transparent !important; box-shadow:none !important; }
+  .truck-mark { width:52px; height:52px; border-radius:50%; overflow:hidden;
+    background:transparent; border:0; box-shadow:none; }
+  .truck-mark img { width:52px; height:60px; margin-top:-4px; display:block; background:transparent; }
   #errbar { position:absolute; top:0; left:0; right:0; z-index:20; display:none; padding:14px 20px; background:var(--accent); color:#fff; font-family:'DM Mono',monospace; font-size:13px; }
   @media (max-width:640px) {
     .bracket { display:none; }
