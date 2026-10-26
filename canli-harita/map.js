@@ -186,28 +186,64 @@
     if(!res.ok)throw new Error(data.error||'Isı haritası alınamadı');
     return data;
   }
+  let metaBusy=false;
+  function selectedDay() {return heatBounds?.days?.find(d=>d.date===C('heat-date').value);}
+  function availability() {
+    const day=selectedDay(),enabled=!!day?.available;
+    C('mode-heat').disabled=!enabled;
+    C('heat-date').disabled=!heatBounds;
+    C('heat-window').textContent=day?.start
+      ? day.start.slice(0,5)+'–'+(day.end?.slice(0,5)||(day.date===heatBounds.today?'şu ana kadar':'00:00 (gün sonu)'))+' · Türkiye saati'+(!enabled?' · Henüz başlamadı veya erişim saatleri dışında.':'')
+      : 'Bu gün için ısı haritası açılmadı. Canlı konumu izleyebilirsiniz.';
+    if(heatData?.date===C('heat-date').value&&enabled)C('heat-window').textContent=formatTrTime(new Date(heatData.window.since))+'–'+formatTrTime(new Date(heatData.window.until))+' · Türkiye saati';
+    if(!enabled&&mode==='heat')setMode('live');
+    return enabled;
+  }
+  function applyMeta(bounds) {
+    heatBounds=bounds;
+    const input=C('heat-date');input.min=bounds.minDate;input.max=bounds.maxDate;
+    if(!input.value||input.value<bounds.minDate||input.value>bounds.maxDate)input.value=bounds.maxDate;
+    return availability();
+  }
+  async function refreshAvailability() {
+    if(metaBusy||!sessionToken)return;
+    metaBusy=true;
+    const before=JSON.stringify(selectedDay());
+    try {
+      const bounds=await heatApi(null);
+      const enabled=applyMeta(bounds);
+      if(enabled&&mode==='heat'&&before!==JSON.stringify(selectedDay()))loadHeat();
+    }catch(e){if(e.message!=='session_end'){
+      heatBounds=null;heatData=null;renderHeat();C('mode-heat').disabled=true;C('heat-date').disabled=true;
+      C('heat-window').textContent='Saatler kontrol edilemedi. Bağlantı yeniden deneniyor…';
+    }}finally{metaBusy=false;}
+  }
   async function loadHeat() {
     const id=++heatRequest;
     heatAbort?.abort();heatAbort=new AbortController();
     heatData=null;renderHeat();
-    C('heat-refresh').disabled=true;C('heat-date').disabled=true;
+    C('heat-refresh').disabled=true;
     C('heat-message').textContent='Günün konumları hazırlanıyor…';
     try {
       const bounds=await heatApi(null,heatAbort.signal);
       if(id!==heatRequest||mode!=='heat')return;
-      heatBounds=bounds;
-      const input=C('heat-date');input.min=bounds.minDate;input.max=bounds.maxDate;
-      if(!input.value||input.value<bounds.minDate||input.value>bounds.maxDate)input.value=bounds.maxDate;
-      const data=await heatApi(input.value,heatAbort.signal);
+      if(!applyMeta(bounds))return;
+      const data=await heatApi(C('heat-date').value,heatAbort.signal);
       if(id!==heatRequest||mode!=='heat')return;
+      if(!applyMeta(data)||!data.available){setMode('live');return;}
       heatData=data;renderHeat();
+      const range=formatTrTime(new Date(data.window.since))+'–'+formatTrTime(new Date(data.window.until));
+      C('heat-window').textContent=range+' · Türkiye saati';
       C('heat-message').textContent=data.pointCount
-        ? data.pointCount.toLocaleString('tr-TR')+' konum · '+formatTrTime(new Date(data.window.since))+'–'+formatTrTime(new Date(data.window.until))+(data.date===data.today?' · Gün devam ediyor.':'')
-        : 'Bu günün izin verilen saatlerinde gösterilecek konum kaydı yok.';
-    }catch(e){if(id===heatRequest&&e.name!=='AbortError'&&e.message!=='session_end')C('heat-message').textContent=e.message;}
-    finally{if(id===heatRequest){C('heat-refresh').disabled=false;C('heat-date').disabled=!heatBounds;}}
+        ? data.pointCount.toLocaleString('tr-TR')+' konum'
+        : 'Bu saat aralığında gösterilecek konum kaydı yok.';
+    }catch(e){if(id===heatRequest&&e.name!=='AbortError'&&e.message!=='session_end'){
+      C('heat-message').textContent=e.message;
+      void refreshAvailability();
+    }}finally{if(id===heatRequest)C('heat-refresh').disabled=false;}
   }
   function setMode(next) {
+    if(next==='heat'&&!selectedDay()?.available)return;
     mode=next;heatRequest++;heatAbort?.abort();heatData=null;renderHeat();
     C('mode-live').setAttribute('aria-pressed',String(mode==='live'));
     C('mode-heat').setAttribute('aria-pressed',String(mode==='heat'));
@@ -220,7 +256,7 @@
   }
   C('mode-live').addEventListener('click',()=>setMode('live'));
   C('mode-heat').addEventListener('click',()=>setMode('heat'));
-  C('heat-date').addEventListener('change',loadHeat);
+  C('heat-date').addEventListener('change',()=>{if(availability()&&mode==='heat')loadHeat();});
   C('heat-refresh').addEventListener('click',loadHeat);
   function stopSession(message) {
     heatRequest++;heatAbort?.abort();heatData=null;heatBounds=null;renderHeat();marker?.remove();
@@ -287,7 +323,8 @@
     if (clockTimer) clearInterval(clockTimer);
     pollOnce();
     let ticks=0;
-    pollTimer = setInterval(()=>{if(mode==='live')pollOnce();else if(++ticks%6===0)heatApi(null).then(b=>{if(heatBounds&&(b.minDate!==heatBounds.minDate||b.maxDate!==heatBounds.maxDate))loadHeat();}).catch(e=>{if(e.message!=='session_end'){heatData=null;renderHeat();C('heat-message').textContent='Bağlantı kontrol edilemedi. Yenile ile yeniden deneyin.';}});}, pollMs);
+    void refreshAvailability();
+    pollTimer = setInterval(()=>{if(mode==='live')pollOnce();if(++ticks%6===0)void refreshAvailability();}, pollMs);
     paintStatus();
     clockTimer = setInterval(paintStatus, 1000);
   }
