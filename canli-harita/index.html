@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Media270 — Canlı Harita</title>
 <link rel="icon" type="image/svg+xml" href="/m270_icon_color.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -45,6 +45,17 @@
     padding:10px 14px; border:1px solid var(--line); border-radius:2px; background:rgba(255,255,255,0.88); backdrop-filter:blur(6px); }
   #status-bar .line { font-family:'DM Mono',monospace; font-size:11px; color:rgba(10,10,10,0.7); line-height:1.5; }
   #status-bar .line b { color:var(--accent); font-weight:400; }
+  #map-tools { position:absolute; left:48px; bottom:38px; z-index:6; display:none; width:min(360px,calc(100vw - 96px)); background:rgba(255,255,255,.96); padding:16px; border:1px solid var(--line); border-radius:8px; box-shadow:0 8px 30px #0001; }
+  .modes { display:flex; gap:6px; margin-bottom:12px; }
+  .modes button, #heat-refresh { border:1px solid var(--line); border-radius:4px; padding:10px 12px; background:#fff; color:var(--ink); font:600 15px Rajdhani,sans-serif; cursor:pointer; }
+  .modes button { flex:1; }
+  .modes button[aria-pressed="true"] { background:var(--ink); color:white; }
+  #heat-controls[hidden] { display:none; }
+  #heat-date { padding:9px; border:1px solid var(--line); border-radius:4px; font:14px sans-serif; width:100%; margin:6px 0 10px; }
+  #heat-message { font:13px/1.5 sans-serif; margin:10px 0; }
+  .heat-scale { height:8px; border-radius:4px; background:linear-gradient(90deg,#32b7cf,#77cf80,#ffcb47,#f36629,#b51f28); }
+  .heat-labels { display:flex; justify-content:space-between; font:11px sans-serif; margin:5px 0 10px; }
+  #heat-note { font:11px/1.5 sans-serif; color:#555; margin-bottom:0; }
   #wordmark { position:absolute; bottom:34px; right:48px; z-index:4; font-family:'DM Mono',monospace; font-size:12px; letter-spacing:0.06em; color:rgba(10,10,10,0.6); display:none; }
   #wordmark b { color:var(--accent); font-weight:400; }
   .mapboxgl-marker { background:transparent !important; box-shadow:none !important; }
@@ -56,6 +67,7 @@
     .bracket { display:none; }
     #header { top:16px; left:18px; } #header h1 { font-size:24px; }
     #status-bar { top:88px; left:18px; max-width:calc(100vw - 36px); }
+    #map-tools { left:18px; bottom:40px; width:calc(100vw - 36px); max-width:360px; padding:12px; max-height:45vh; overflow:auto; }
     #wordmark { bottom:14px; right:16px; font-size:10px; }
   }
 </style>
@@ -81,249 +93,25 @@
   <div class="bracket tl"></div><div class="bracket tr"></div><div class="bracket bl"></div><div class="bracket br"></div>
   <div id="header"><p class="eyebrow">Media270 · Canlı</p><h1>Araç Konumu</h1></div>
   <div id="status-bar">
+    <div class="line" id="status-fix"></div>
     <div class="line" id="status-clock">Şimdi: <b>—</b></div>
     <div class="line" id="status-speed">Hız: <b>—</b></div>
     <div class="line" id="status-address">Konum: <b>—</b></div>
   </div>
+  <section id="map-tools" aria-label="Harita görünümü">
+    <div class="modes"><button id="mode-live" type="button" aria-pressed="true">Canlı konum</button><button id="mode-heat" type="button" aria-pressed="false">Günlük ısı haritası</button></div>
+    <div id="heat-controls" hidden>
+      <label for="heat-date">Gün seçin · Türkiye saati</label>
+      <input id="heat-date" type="date" disabled />
+      <button id="heat-refresh" type="button">Yenile</button>
+      <p id="heat-message" role="status" aria-live="polite"></p>
+      <div class="heat-scale" aria-hidden="true"></div><div class="heat-labels"><span>Daha az süre</span><span>Daha fazla süre</span></div>
+      <p id="heat-note">Renkler aracın gözlenen konum süresini yaklaşık gösterir. Uzun GPS boşlukları hesaba katılmaz. Reklam izlenme sayısı değildir.</p>
+    </div>
+  </section>
   <div id="wordmark"><b>media270</b>.com</div>
 
   <script src="config.js"></script>
-  <script>
-(function () {
-  const CFG = window.LIVE_MAP_CONFIG || {};
-  const C = (id) => document.getElementById(id);
-
-  function showErr(msg) {
-    const b = C('errbar');
-    b.textContent = msg;
-    b.style.display = 'block';
-  }
-
-  if (!CFG.supabaseUrl || CFG.supabaseUrl.includes('YOUR_PROJECT')) {
-    showErr('config.js dosyasında supabaseUrl ve supabaseAnonKey ayarlanmalı.');
-    return;
-  }
-  if (!CFG.mapboxToken || !String(CFG.mapboxToken).startsWith('pk.')) {
-    showErr('config.js içinde geçerli bir Mapbox token gerekli.');
-    return;
-  }
-
-  const fnBase = CFG.supabaseUrl.replace(/\/$/, '') + '/functions/v1';
-  const pollMs = CFG.pollIntervalMs || 5000;
-  const headers = () => ({
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + CFG.supabaseAnonKey,
-    'apikey': CFG.supabaseAnonKey,
-  });
-
-  let sessionToken = null;
-  let pollTimer = null;
-  let clockTimer = null;
-  let map = null;
-  let marker = null;
-  let lastFix = null;
-  let hasFramed = false;
-  let userHasMoved = false;
-
-  function normalizeCode(raw) {
-    return raw.trim().toUpperCase().replace(/\s+/g, '');
-  }
-
-  function formatTrTime(date) {
-    try {
-      return date.toLocaleString('tr-TR', {
-        timeZone: 'Europe/Istanbul',
-        hour: '2-digit', minute: '2-digit', second: '2-digit',
-      });
-    } catch { return '—'; }
-  }
-
-  function metersBetween(a, b) {
-    if (!a) return Infinity;
-    const toRad = (d) => d * Math.PI / 180;
-    const dLat = toRad(b.lat - a.lat);
-    const dLon = toRad(b.lon - a.lon);
-    const x = Math.sin(dLat / 2) ** 2
-      + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLon / 2) ** 2;
-    return 2 * 6371000 * Math.asin(Math.sqrt(x));
-  }
-
-  function showMapUi() {
-    C('gate').style.display = 'none';
-    ['map', 'grid-overlay', 'header', 'status-bar', 'wordmark'].forEach((id) => {
-      C(id).style.display = id === 'map' ? 'block' : (id === 'grid-overlay' ? 'block' : 'block');
-    });
-  }
-
-  function initMap() {
-    mapboxgl.accessToken = CFG.mapboxToken;
-    map = new mapboxgl.Map({
-      container: 'map',
-      style: CFG.mapStyle || 'mapbox://styles/mapbox/light-v11',
-      center: [29.03, 41.05],
-      zoom: 11,
-      pitch: 0,
-      bearing: 0,
-      dragRotate: false,
-      pitchWithRotate: false,
-      attributionControl: false,
-    });
-
-    const el = document.createElement('div');
-    el.className = 'truck-mark';
-    const img = document.createElement('img');
-    img.src = '/m270_icon_color.svg';
-    img.alt = 'Media270';
-    el.appendChild(img);
-    marker = new mapboxgl.Marker({ element: el, anchor: 'center' })
-      .setLngLat([29.03, 41.05])
-      .addTo(map);
-
-    map.on('dragstart', () => { userHasMoved = true; });
-    map.on('zoomstart', (e) => {
-      if (e.originalEvent) userHasMoved = true;
-    });
-
-    map.on('load', () => {
-      map.getStyle().layers.forEach((ly) => {
-        if (ly.type !== 'symbol') return;
-        const keep = /settlement|place-|state-label/.test(ly.id);
-        map.setLayoutProperty(ly.id, 'visibility', keep ? 'visible' : 'none');
-        if (!keep) return;
-        try {
-          map.setPaintProperty(ly.id, 'text-color', '#0A0A0A');
-          map.setPaintProperty(ly.id, 'text-halo-color', '#F2F0EC');
-          map.setPaintProperty(ly.id, 'text-halo-width', 1.6);
-          map.setPaintProperty(ly.id, 'text-opacity', 0.92);
-        } catch (err) { /* bazı katmanlarda paint yok */ }
-      });
-    });
-  }
-
-  function frameVehicle(lon, lat, animate) {
-    const view = { center: [lon, lat], zoom: CFG.followZoom || 13, bearing: 0, pitch: 0 };
-    if (!map.loaded()) {
-      map.once('load', () => map.jumpTo(view));
-      return;
-    }
-    if (animate) map.easeTo({ ...view, duration: 800, essential: true });
-    else map.jumpTo(view);
-  }
-
-  function updateMarker(lon, lat) {
-    if (!marker || !map) return;
-    marker.setLngLat([lon, lat]);
-    const next = { lon, lat };
-    const dist = metersBetween(lastFix, next);
-    lastFix = next;
-
-    if (!hasFramed) {
-      hasFramed = true;
-      frameVehicle(lon, lat, true);
-      return;
-    }
-    if (!userHasMoved && dist > 25) {
-      frameVehicle(lon, lat, true);
-    }
-  }
-
-  function paintStatus() {
-    C('status-clock').innerHTML = 'Şimdi: <b>' + formatTrTime(new Date()) + '</b>';
-  }
-
-  function updateStatus(data) {
-    paintStatus();
-    C('status-speed').innerHTML = 'Hız: <b>' + (data.speed != null ? data.speed + ' km/s' : '—') + '</b>';
-    C('status-address').innerHTML = 'Konum: <b>' + (data.address || (data.lat.toFixed(5) + ', ' + data.lon.toFixed(5))) + '</b>';
-  }
-
-  function stopSession(message) {
-    if (pollTimer) clearInterval(pollTimer);
-    if (clockTimer) clearInterval(clockTimer);
-    pollTimer = null;
-    clockTimer = null;
-    sessionToken = null;
-    lastFix = null;
-    hasFramed = false;
-    userHasMoved = false;
-    C('gate-error').textContent = message || '';
-    C('gate').style.display = 'flex';
-    ['map', 'grid-overlay', 'header', 'status-bar', 'wordmark'].forEach((id) => {
-      C(id).style.display = 'none';
-    });
-    if (message) C('gate-error').textContent = message;
-  }
-
-  async function validateCode(code) {
-    const res = await fetch(fnBase + '/live-map-validate', {
-      method: 'POST',
-      headers: headers(),
-      body: JSON.stringify({ code }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Kod doğrulanamadı');
-    return data;
-  }
-
-  async function fetchPosition() {
-    const res = await fetch(fnBase + '/live-map-position', {
-      method: 'GET',
-      headers: { ...headers(), 'x-live-map-session': sessionToken },
-    });
-    const data = await res.json();
-    if (res.status === 403 || res.status === 401) {
-      stopSession(data.error || 'Oturum sona erdi');
-      throw new Error('session_end');
-    }
-    if (!res.ok) throw new Error(data.error || 'Konum alınamadı');
-    return data;
-  }
-
-  async function pollOnce() {
-    try {
-      const pos = await fetchPosition();
-      updateMarker(pos.lon, pos.lat);
-      updateStatus(pos);
-    } catch (e) {
-      if (e.message === 'session_end') return;
-      console.warn('[poll]', e);
-    }
-  }
-
-  function startPolling() {
-    if (pollTimer) clearInterval(pollTimer);
-    if (clockTimer) clearInterval(clockTimer);
-    pollOnce();
-    pollTimer = setInterval(pollOnce, pollMs);
-    paintStatus();
-    clockTimer = setInterval(paintStatus, 1000);
-  }
-
-  C('gate-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const code = normalizeCode(C('code-input').value);
-    C('gate-error').textContent = '';
-    C('gate-submit').disabled = true;
-    try {
-      const { sessionToken: token } = await validateCode(code);
-      sessionToken = token;
-      showMapUi();
-      if (!map) initMap();
-      else map.resize();
-      startPolling();
-    } catch (err) {
-      C('gate-error').textContent = err.message || 'Giriş başarısız';
-    } finally {
-      C('gate-submit').disabled = false;
-    }
-  });
-
-  const params = new URLSearchParams(location.search);
-  const prefill = params.get('code');
-  if (prefill) {
-    C('code-input').value = prefill;
-  }
-})();
-  </script>
+  <script src="map.js?v=20261026"></script>
 </body>
 </html>
